@@ -10,4 +10,3 @@ plugins {
 }
 rootProject.name = "otus-first"
 include("M1-L1-First")
-include("M1-L1-First")
