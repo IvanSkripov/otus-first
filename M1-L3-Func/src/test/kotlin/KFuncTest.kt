@@ -52,7 +52,7 @@ class KFuncTest {
         else -> "Polizei"
     }
 
-    private fun deduce(): Unit { }
+    private fun deduce() { }
 
     private fun raiseAlways(): Nothing = throw RuntimeException("Raise it now")
 
@@ -99,7 +99,7 @@ class KFuncTest {
 
     private fun talk(a: String): String = "Say - ${a}"
 
-    private fun sayThis (name: String, talk: (String) -> String): Unit {
+    private fun sayThis (name: String, talk: (String) -> String) {
         println(talk(name))
     }
 
