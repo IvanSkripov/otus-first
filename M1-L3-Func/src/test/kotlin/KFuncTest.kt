@@ -111,6 +111,23 @@ class KFuncTest {
         val ups:  String.() -> String = { "${this}-${this}"}
         assertEquals("doom".ups(), "doom-doom")
 
+        val wow: String.(String) -> Int = { s: String ->
+            val a = this.toInt()
+            val b = s.toInt()
+            a+b
+        }
+
+        assertEquals("1".wow("2"), 3)
+        assertThrows<NumberFormatException>() { "a".wow("2") }
+        assertThrows<NumberFormatException>() { "1".wow("a") }
+
+        val greet: String.(String) -> String = { "Hello, ${this} ${it}" }
+        assertEquals("Ivan".greet("Skripov"), "Hello, Ivan Skripov")
+
+        val str = "Ivan".greetWithSN("Fedorovich", "Skripov") { a: String, b: String -> "${a} ${b}" }
+        println(str)
+        assertEquals(str, "Hello, Ivan Fedorovich Skripov")
+
         val b = buildIntArray {
             add(1)
             add(2)
@@ -119,7 +136,6 @@ class KFuncTest {
         }
 
         println("b typeOf ${b::class.qualifiedName} is ${b.toHumanString()}")
-
         val c: IntArray = intArrayOf(1, 2, 3, 4)
         println("c typeOf ${c::class.qualifiedName} is ${c.toHumanString()}")
 
@@ -140,5 +156,63 @@ class KFuncTest {
         this.forEachIndexed { index, i -> if (index != 0) { s = s + ", ${i}"}  }
 
         return s + "]"
+    }
+
+    private fun String.greetWithSN (second: String, family: String, getter: String.(String, String) -> String): String {
+        return "Hello, ${this} ${getter(second, family)}"
+    }
+
+    @Test
+    /*
+        1. infix
+        2. повторение мать учения
+     */
+    fun infixTest() {
+        val a = "Karl" doom 5
+        println (a)
+
+        val x = 2 power 3
+        val y = 2.0 power 3
+        println ("x = ${x}, y = ${y}")
+        assertEquals(x, 8)
+        assertEquals(y, 8.0)
+
+        assertEquals(10 power 0, 1)
+        assertEquals(2 power 1, 2)
+        assertEquals(2 power 10, 1024)
+
+        val z = func("string") { "prefix: ${it}" }
+        println(z)
+        assertEquals(z, "lambda (prefix: string)")
+    }
+
+    infix fun String.doom(to: Int): String = "${this}, dooms day after ${to} days"
+
+    infix fun Int.power(n: Int): Int {
+        return internalPower<Int>( this, n, { 1 }, { acc , value  -> acc * value})
+    }
+
+    infix fun Double.power(n: Int): Double {
+        return internalPower<Double>(this, n, { 1.0 },  { acc , value  -> acc * value}
+        )
+    }
+
+    private fun <T: Number> internalPower(initial: T, n: Int, init: () -> T, mul: (acc: T, value: T) -> T ): T {
+        var res: T = init();
+        var times = n
+        while (times-- > 0) {
+            res = mul(res, initial)
+        }
+        return res
+    }
+
+    private fun func(arg: String, block: (String) -> String) = "lambda (${block(arg)})"
+
+
+}
+
+fun seq() {
+    val s = sequence {
+        yield(1)
     }
 }
