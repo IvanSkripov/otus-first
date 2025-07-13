@@ -44,7 +44,7 @@ class BuildPluginMultiplatform : Plugin<Project> {
 private fun KotlinMultiplatformExtension.configureTargets(project: Project) {
     val libs = project.the<LibrariesForLibs> ()
     jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(libs.versions.jvm.la™¶nguage.get()))
+        languageVersion.set(JavaLanguageVersion.of(libs.versions.jvm.language.get()))
     }
 
     jvm {
