@@ -41,7 +41,9 @@ services:
     ports:
       # необходимо открыть порты, которые используются плагином forward
       - "24224:24224"
+      - "24225:24225"
       - "24224:24224/udp"
+      - "24225:24225/udp"
       - "2020:2020"
     environment:
       - opensearch_host=opensearch
@@ -107,6 +109,16 @@ services:
       # Minio
       #- "9000:9000"
       #- "9001:9001"
+    logging:
+      # используемый драйвер логгирования
+      driver: "fluentd"
+      options:
+        # куда посылать лог-сообщения, необходимо чтобы адрес
+        # совпадал с настройками плагина forward
+        fluentd-address: localhost:24225
+        # теги используются для маршрутизации лог-сообщений, тема
+        # маршрутизации будет рассмотрена ниже
+        tag: envoy.logs
     depends_on:
       keycloak:
         condition: service_healthy
