@@ -54,5 +54,5 @@
 - Генерация транспортных моделей
 - Генерация внутренних моделей
 - Интеграция с TestContainers
-- Логи envoy отправлять в OpenSearch
-- Логи Minio в envoy
+- Логи envoy парсить в OpenSearch
+- Логи Minio в OpenSearch
