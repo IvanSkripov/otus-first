@@ -1,12 +1,15 @@
 pluginManagement {
-    val kotlinVersion: String by settings
     plugins {
+        val kotlinVersion: String by settings
         kotlin("jvm") version kotlinVersion
     }
 }
 
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 rootProject.name = "otus-first"
-include("M1-L1-First")
+
+includeBuild("lessons")
+includeBuild("project-build")
+

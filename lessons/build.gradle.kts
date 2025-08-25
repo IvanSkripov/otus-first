@@ -5,13 +5,15 @@ plugins {
 group = "ru.otus.kotlin.course"
 version = "1.0-SNAPSHOT"
 
-allprojects {
-    repositories {
-        mavenCentral()
-    }
+
+repositories {
+    mavenCentral()
 }
 
 subprojects {
+    repositories {
+        mavenCentral()
+    }
     group = rootProject.group
     version = rootProject.version
 }
