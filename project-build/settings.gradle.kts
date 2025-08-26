@@ -27,6 +27,7 @@ plugins {
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include(":starter")
+include(":apis")
 
 
 
