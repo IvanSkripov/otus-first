@@ -20,5 +20,8 @@ subprojects {
 
 ext {
     val specDir = layout.projectDirectory.dir("../specs")
-    set("api-spec", specDir.file("open-api-chat-gpt.yml").toString())
+    // set("api-spec", specDir.file("open-api-chat-gpt.yml").toString())
+    //set("api-spec", specDir.file("requestBody-test.yaml").toString())
+    set("api-spec", specDir.file("open-api-images.yaml").toString())
+
 }
