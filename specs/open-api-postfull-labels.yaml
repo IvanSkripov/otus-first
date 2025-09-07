@@ -1,0 +1,27 @@
+components:
+  schemas:
+    Label:
+      type: object
+      description: Элемент метаинформации. Метка
+      properties:
+        key:
+          type: string
+        desc:
+          type: string
+        value_:
+          type: string
+      required:
+        - key
+        - desc
+
+    Labels:
+      type: array
+      items:
+        $ref: "#/components/schemas/Label"
+
+    Tags:
+      type: array
+      items:
+        type: string
+
+

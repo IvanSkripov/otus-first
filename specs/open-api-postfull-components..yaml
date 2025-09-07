@@ -1,0 +1,236 @@
+components:
+  schemas:
+    IRequest:
+      type: object
+      description: Базовый интерфейс для всех запросов
+      properties:
+        requestType:
+          type: string
+          description: discriminator property
+          example: create
+      discriminator:
+        propertyName: requestType
+        mapping:
+          create: "#/components/schemas/ImageCreateRequest"
+      required:
+        - requestType
+
+    IResponse:
+      type: object
+      description: Базовый интерфейс для всех ответов
+      properties:
+        responseType:
+          type: string
+          description: discriminator property
+          example: create
+        result:
+          $ref: "#/components/schemas/ResponseResult"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ResponseError"
+      required:
+        - responseType
+        - result
+      discriminator:
+          propertyName: responseType
+          mapping:
+            create: "#/components/schemas/ImageCreateResponse"
+
+    ResponseResult:
+      type: string
+      enum:
+        - success
+        - error
+
+    ResponseError:
+      #type: string
+      $ref: "./open-api-postfull-errors.yaml"
+
+    IDebug:
+      #type: string
+      $ref: "./open-api-postfull-stubs.yaml"
+
+    ImageBase:
+      type: object
+      description: Базовый класс для изображения для создания
+      properties:
+        title:
+          description: Название
+          type: string
+        desc:
+          description: Детальное описание изображение
+          type: string
+        tags:
+          $ref: "./open-api-postfull-labels.yaml#/components/schemas/Tags"
+        labels:
+          $ref: "./open-api-postfull-labels.yaml#/components/schemas/Labels"
+
+    ImageSourceLink:
+      type: object
+      title: linkToDownload
+      properties:
+        link:
+          type: string
+          format: uri
+      required:
+        - linkToDownload
+
+    ImageSourceFile:
+      type: object
+      title: downloadedFile
+      properties:
+        file:
+          type: string
+          format: binary
+      required:
+        - downloadedFile
+
+    ImageSource:
+      type: object
+      properties:
+        sourceType:
+          type: string
+      oneOf:
+        - $ref: "#/components/schemas/ImageSourceLink"
+        - $ref: "#/components/schemas/ImageSourceFile"
+      discriminator:
+        propertyName: sourceType
+        mapping:
+          link: "#/components/schemas/ImageSourceLink"
+          file: "#/components/schemas/ImageSourceFile"
+
+    ImageItem:
+      allOf:
+        - $ref: '#/components/schemas/ImageBase'
+        - $ref: '#/components/schemas/ImageId'
+
+    ImageId:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+
+    ImageUrl:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+
+    Image:
+      allOf:
+        - $ref: "#/components/schemas/ImageItem"
+        - type: object
+          properties:
+            image:
+              description: Ссылка на изображение
+              type: string
+              format: uri
+            preview:
+              description: Ссылка на preview
+              type: string
+              format: uri
+          required:
+            - image
+            - preview
+
+    ImageCreateObject:
+      allOf:
+        - $ref: "#/components/schemas/ImageBase"
+        - $ref: "#/components/schemas/ImageSource"
+
+    ImageCreateRequest:
+      allOf:
+        - $ref: "#/components/schemas/IRequest"
+        - $ref: "#/components/schemas/IDebug"
+        - type: object
+          properties:
+            image:
+              $ref: '#/components/schemas/ImageCreateObject'
+
+    ImageCreateResponse:
+      allOf:
+        - $ref: "#/components/schemas/IResponse"
+        - $ref: "#/components/schemas/ImageId"
+
+    ImageReadRequest:
+      allOf:
+        - $ref: "#/components/schemas/IRequest"
+        - $ref: "#/components/schemas/IDebug"
+        - $ref: "#/components/schemas/ImageId"
+
+    ImageReadResponse:
+      allOf:
+        - $ref: "#/components/schemas/IResponse"
+        - $ref: "#/components/schemas/Image"
+
+    ImageLinkRequest:
+      allOf:
+        - $ref: "#/components/schemas/IRequest"
+        - $ref: "#/components/schemas/IDebug"
+        - $ref: "#/components/schemas/ImageId"
+
+    ImageLinkResponse:
+      allOf:
+        - $ref: "#/components/schemas/IResponse"
+        - $ref: "#/components/schemas/ImageUrl"
+
+    ImageDownloadRequest:
+      allOf:
+        - $ref: "#/components/schemas/IRequest"
+        - $ref: "#/components/schemas/IDebug"
+        - $ref: "#/components/schemas/ImageId"
+
+    ImageDownloadErrorResponse:
+      allOf:
+        - $ref: "#/components/schemas/IResponse"
+
+    ImageUpdateRequest:
+      allOf:
+        - $ref: "#/components/schemas/IRequest"
+        - $ref: "#/components/schemas/IDebug"
+        - $ref: "#/components/schemas/ImageItem"
+
+    ImageUpdateResponse:
+      allOf:
+        - $ref: "#/components/schemas/IResponse"
+
+    ImageDeleteRequest:
+      allOf:
+        - $ref: "#/components/schemas/IRequest"
+        - $ref: "#/components/schemas/IDebug"
+        - $ref: "#/components/schemas/ImageId"
+
+    ImageDeleteResponse:
+      allOf:
+        - $ref: "#/components/schemas/IResponse"
+
+    ImageSearchObject:
+      type: object
+      properties:
+        searchCreateria:
+          type: string
+      required:
+        - searchCreteria
+
+    ImageSearchList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Image"
+
+    ImageSearchRequest:
+      allOf:
+        - $ref: "#/components/schemas/IRequest"
+        - $ref: "#/components/schemas/IDebug"
+        - $ref: "#/components/schemas/ImageSearchObject"
+
+
+    ImageSearchResponse:
+      allOf:
+        - $ref: "#/components/schemas/IResponse"
+        - $ref: "#/components/schemas/ImageSearchList"
+      required:
+        - ImageSearchList

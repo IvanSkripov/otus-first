@@ -6,7 +6,7 @@ plugins {
 sourceSets {
     main {
         java.srcDir(layout.buildDirectory.dir(
-            "generater-resources/main/src/main/kotlinn"
+            "generate-resources/main/src/main/kotlin"
         ))
     }
 }
@@ -23,6 +23,7 @@ openApiGenerate {
     globalProperties.apply {
         put("models", "")
         put("modelDocs", "false")
+        put("modelTests", "true")
     }
 
     configOptions.set (
@@ -33,6 +34,13 @@ openApiGenerate {
             "collectionType" to "list"
         )
     )
+}
+
+dependencies {
+    implementation(kotlin("stdlib"))
+    implementation(libs.jackson.kotlin)
+    implementation(libs.jackson.datatype)
+    testImplementation(kotlin("test-junit"))
 }
 
 tasks {
