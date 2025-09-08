@@ -1,29 +1,25 @@
-#components:
-#  schemas:
-    type: object
-    title: Debug
-    properties:
-      debug:
-        title: DebugItem
-        type: object
-        properties:
-          mode:
-            type: string
-            enum:
-              - prod
-              - test
-              - stub
-          stub:
-            type: string
-            description: Перечисления всех стабов
-            enum:
-              - success
-              - notFound
-              - badId
-              - badTitle
-              - badDescription
-              - badVisibility
-              - cannotDelete
-              - badSearchString
-
+components:
+  schemas:
+    Debug:
+      type: object
+      properties:
+        debug:
+          title: DebugItem
+          type: object
+          properties:
+            mode:
+              type: string
+              enum:
+                - prod
+                - test
+                - stub
+            stub:
+              type: string
+              description: Перечисления всех стабов
+              enum:
+                - success
+                - wrongOwner
+                - wrongLink
+                - wrongImageSize
+                - wrongImageFormat
 

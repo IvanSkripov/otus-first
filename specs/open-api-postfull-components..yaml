@@ -12,8 +12,6 @@ components:
         propertyName: requestType
         mapping:
           create: "#/components/schemas/ImageCreateRequest"
-      required:
-        - requestType
 
     IResponse:
       type: object
@@ -30,7 +28,6 @@ components:
           items:
             $ref: "#/components/schemas/ResponseError"
       required:
-        - responseType
         - result
       discriminator:
           propertyName: responseType
@@ -45,11 +42,11 @@ components:
 
     ResponseError:
       #type: string
-      $ref: "./open-api-postfull-errors.yaml"
+      $ref: "./open-api-postfull-errors.yaml#/components/schemas/ResponseErrorValue"
 
     IDebug:
       #type: string
-      $ref: "./open-api-postfull-stubs.yaml"
+      $ref: "./open-api-postfull-stubs.yaml#/components/schemas/Debug"
 
     ImageBase:
       type: object
@@ -106,12 +103,15 @@ components:
         - $ref: '#/components/schemas/ImageId'
 
     ImageId:
-      type: object
-      properties:
-        id:
-          type: string
+      $ref: "#/components/schemas/NullableImageId"
       required:
         - id
+
+    NullableImageId:
+      type: object
+      properties:
+        imageId:
+          type: string
 
     ImageUrl:
       type: object
@@ -154,7 +154,7 @@ components:
     ImageCreateResponse:
       allOf:
         - $ref: "#/components/schemas/IResponse"
-        - $ref: "#/components/schemas/ImageId"
+        - $ref: "#/components/schemas/NullableImageId"
 
     ImageReadRequest:
       allOf:

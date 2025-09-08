@@ -1,14 +1,22 @@
-title: ResponseErrorValue
-type: object
-properties:
-  code:
-    type: string
-  group:
-    type: string
-  field:
-      type: string
-  message:
-    type: string
-required:
-  - code
-  - message
+components:
+  schemas:
+    ResponseErrorValue:
+      type: object
+      properties:
+        code:
+          type: string
+        group:
+          type: string
+        field:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message
+
+#  Возможные ошибки
+#  * '101' - WrongOwner, Изображение НЕ принадлежит владельцу (id.owner == visitor)
+#  * '102' - WrongLink, Невеная ссылка для закачки изображения
+#  * '103' - WrongImageSize, Размер превышает 100 МБ
+#  * '104' - WrongImageFormat, Неверный формат загружаемого изображения
