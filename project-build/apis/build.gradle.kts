@@ -26,6 +26,14 @@ openApiGenerate {
         put("modelTests", "true")
     }
 
+    additionalProperties.apply {
+        put("generateOneOfAnyOfWrappers", "true")
+        put("sealedClassesForOneOf", "true")
+        put("useSealedClasses", "true")
+
+    }
+
+
     configOptions.set (
         mapOf (
             "dateLibrary" to "string",
@@ -40,6 +48,7 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation(libs.jackson.kotlin)
     implementation(libs.jackson.datatype)
+    implementation ("com.google.code.gson:gson:2.11.0")
     testImplementation(kotlin("test-junit"))
 }
 

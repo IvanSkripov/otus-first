@@ -2,6 +2,7 @@
 kotlin = "2.1.21"
 
 openapi-generator = "7.12.0"
+#jackson = "2.20"
 jackson = "2.18.3"
 
 # BASE

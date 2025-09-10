@@ -12,6 +12,13 @@ components:
         propertyName: requestType
         mapping:
           create: "#/components/schemas/ImageCreateRequest"
+          read: "#/components/schemas/ImageReadRequest"
+          update: "#/components/schemas/ImageUpdateRequest"
+          delete: "#/components/schemas/ImageDeleteRequest"
+          link: "#/components/schemas/ImageLinkRequest"
+          download: "#/components/schemas/ImageDownloadRequest"
+          search: "#/components/schemas/ImageSearchRequest"
+
 
     IResponse:
       type: object
@@ -33,6 +40,12 @@ components:
           propertyName: responseType
           mapping:
             create: "#/components/schemas/ImageCreateResponse"
+            read: "#/components/schemas/ImageReadResponse"
+            update: "#/components/schemas/ImageUpdateResponse"
+            delete: "#/components/schemas/ImageDeleteResponse"
+            link: "#/components/schemas/ImageLinkResponse"
+            download: "#/components/schemas/ImageDownloadErrorResponse"
+            search: "#/components/schemas/ImageSearchResponse"
 
     ResponseResult:
       type: string
@@ -65,45 +78,53 @@ components:
 
     ImageSourceLink:
       type: object
-      title: linkToDownload
       properties:
         link:
           type: string
           format: uri
-      required:
-        - linkToDownload
+#      required:
+#        - link
 
     ImageSourceFile:
       type: object
-      title: downloadedFile
       properties:
         file:
           type: string
           format: binary
-      required:
-        - downloadedFile
+#      required:
+#        - file
 
-    ImageSource:
+    ISourceImageSource:
       type: object
       properties:
         sourceType:
           type: string
-      oneOf:
+          enum:
+            - link
+            - file
+      allOf:
         - $ref: "#/components/schemas/ImageSourceLink"
         - $ref: "#/components/schemas/ImageSourceFile"
-      discriminator:
-        propertyName: sourceType
-        mapping:
-          link: "#/components/schemas/ImageSourceLink"
-          file: "#/components/schemas/ImageSourceFile"
+      required:
+        - sourceType
+#      discriminator:
+#        propertyName: sourceType
+#        mapping:
+#          link: "#/components/schemas/ImageSourceLink"
+#          file: "#/components/schemas/ImageSourceFile"
 
     ImageItem:
       allOf:
         - $ref: '#/components/schemas/ImageBase'
         - $ref: '#/components/schemas/ImageId'
+      required:
+        - ImageId
 
     ImageId:
-      $ref: "#/components/schemas/NullableImageId"
+      type: object
+      properties:
+        imageId:
+          type: string
       required:
         - id
 
@@ -192,7 +213,10 @@ components:
       allOf:
         - $ref: "#/components/schemas/IRequest"
         - $ref: "#/components/schemas/IDebug"
-        - $ref: "#/components/schemas/ImageItem"
+        - type: object
+          properties:
+            image:
+              $ref: "#/components/schemas/ImageItem"
 
     ImageUpdateResponse:
       allOf:
@@ -225,8 +249,10 @@ components:
       allOf:
         - $ref: "#/components/schemas/IRequest"
         - $ref: "#/components/schemas/IDebug"
-        - $ref: "#/components/schemas/ImageSearchObject"
-
+        - type: object
+          properties:
+            search:
+              $ref: "#/components/schemas/ImageSearchObject"
 
     ImageSearchResponse:
       allOf:
