@@ -1,10 +1,6 @@
 package ru.otus.kotlin.course.common
 
-import ru.otus.kotlin.course.common.models.PsCommand
-import ru.otus.kotlin.course.common.models.PsError
-import ru.otus.kotlin.course.common.models.PsRequestId
-import ru.otus.kotlin.course.common.models.PsState
-import ru.otus.kotlin.course.common.models.PsWorkMode
+import ru.otus.kotlin.course.common.models.*
 import ru.otus.kotlin.course.common.stubs.PsStubs
 
 
@@ -19,5 +15,10 @@ data class PsBeContext (
     var requestId: PsRequestId = PsRequestId.NONE,
     //var timeStart: Instant =
 
+    var request: PsImage = PsImage(),
+    var filterString: String,
+
+    var response: PsImage = PsImage(),
+    var responseList : MutableList<PsImage> = mutableListOf()
 )
 { }

@@ -21,7 +21,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: "./open-api-postfull-components..yaml#/components/schemas/ImageCreateRequest"
       responses:

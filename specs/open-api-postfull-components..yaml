@@ -11,7 +11,7 @@ components:
       discriminator:
         propertyName: requestType
         mapping:
-          create: "#/components/schemas/ImageCreateRequest"
+         #  create: "#/components/schemas/ImageCreateRequest"
           read: "#/components/schemas/ImageReadRequest"
           update: "#/components/schemas/ImageUpdateRequest"
           delete: "#/components/schemas/ImageDeleteRequest"
@@ -77,41 +77,45 @@ components:
           $ref: "./open-api-postfull-labels.yaml#/components/schemas/Labels"
 
     ImageSourceLink:
-      type: object
-      properties:
-        link:
-          type: string
-          format: uri
-#      required:
-#        - link
+      allOf:
+        - $ref: "#/components/schemas/ISource"
+        - type: object
+          properties:
+            link:
+              type: string
+              format: uri
+          required:
+            - link
 
     ImageSourceFile:
-      type: object
-      properties:
-        file:
-          type: string
-          format: binary
-#      required:
-#        - file
+      allOf:
+        - $ref: "#/components/schemas/ISource"
+        - type: object
+          properties:
+            file:
+              type: string
+              format: binary
+          required:
+            - file
 
-    ISourceImageSource:
+    ISource:
       type: object
       properties:
         sourceType:
           type: string
-          enum:
-            - link
-            - file
-      allOf:
-        - $ref: "#/components/schemas/ImageSourceLink"
-        - $ref: "#/components/schemas/ImageSourceFile"
       required:
         - sourceType
-#      discriminator:
-#        propertyName: sourceType
-#        mapping:
-#          link: "#/components/schemas/ImageSourceLink"
-#          file: "#/components/schemas/ImageSourceFile"
+      discriminator:
+        propertyName: sourceType
+        mapping:
+          link: "#/components/schemas/ImageSourceLink"
+          file: "#/components/schemas/ImageSourceFile"
+
+    ImageSourceObject:
+      type: object
+      properties:
+        sourceValue:
+          $ref: '#/components/schemas/ISource'
 
     ImageItem:
       allOf:
@@ -158,14 +162,19 @@ components:
             - image
             - preview
 
+
     ImageCreateObject:
-      allOf:
-        - $ref: "#/components/schemas/ImageBase"
-        - $ref: "#/components/schemas/ImageSource"
+      type: object
+      properties:
+        source:
+          $ref: "#/components/schemas/ImageSourceObject"
+        title:
+          description: Название
+          type: string
+
 
     ImageCreateRequest:
       allOf:
-        - $ref: "#/components/schemas/IRequest"
         - $ref: "#/components/schemas/IDebug"
         - type: object
           properties:
