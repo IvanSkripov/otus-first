@@ -82,8 +82,8 @@ class RequestSerializationTest {
     fun serialize() {
         val json = apiRequestSerialize(requestUpdate)
 
-        assertContains(json, Regex("\"title\":\\s*\"${requestUpdate.image?.title}\""))
-        assertContains(json, Regex("\"desc\":\\s*\"${requestUpdate.image?.desc}\""))
+        assertContains(json, Regex("\"title\":\\s*\"${requestUpdate.image.title}\""))
+        assertContains(json, Regex("\"desc\":\\s*\"${requestUpdate.image.desc}\""))
         assertContains(json, Regex("\"stub\":\\s*\"wrongLink\""))
         assertContains(json, Regex("\"requestType\":\\s*\"update\""))
 

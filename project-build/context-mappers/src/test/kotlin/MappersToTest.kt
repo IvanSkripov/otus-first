@@ -1,13 +1,12 @@
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import ru.otus.kotlin.course.api.v1.models.*
+import ru.otus.kotlin.course.api.v1.models.IResponse
 import ru.otus.kotlin.course.common.PsBeContext
-import ru.otus.kotlin.course.common.models.*
+import ru.otus.kotlin.course.common.models.PsCommand
+import ru.otus.kotlin.course.common.models.PsState
 import ru.otus.kotlin.course.common.stubs.*
 import ru.otus.kotlin.course.mappers.exception.WrongStateException
-import ru.otus.kotlin.course.mappers.fromTransport
 import ru.otus.kotlin.course.mappers.toTransport
-import java.net.URI
 import kotlin.test.assertEquals
 
 

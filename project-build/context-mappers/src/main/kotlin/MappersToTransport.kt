@@ -85,7 +85,8 @@ private fun PsBeContext.toTransportDownloadFalse(): ImageDownloadErrorResponse {
 private fun PsImage.toTransportImage(): Image = toTransportImageNullable()!!.let { it }
 
 private fun PsImage.toTransportImageNullable(): Image? {
-    if (id == PsImageId.NONE) return null;
+    if (id == PsImageId.NONE) return null
+
     return Image(
         imageId = id.asString(),
         image = URI(imageUrl),

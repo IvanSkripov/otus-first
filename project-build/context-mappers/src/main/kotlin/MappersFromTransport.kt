@@ -34,7 +34,7 @@ private fun DebugItem.fromTransportToStub(): PsStubs = when (stub) {
 }
 
 private fun ImageItem.toInternal(): PsImage {
-    val image: PsImage = PsImage(
+    val image = PsImage(
         id = PsImageId(imageId)
     )
 
@@ -46,7 +46,7 @@ private fun ImageItem.toInternal(): PsImage {
     this.labels?.let {
         it.forEach { image.labels.add(PsLabel(it.key, it.desc ?: "", it.value ?: "")) }
     }
-    return image;
+    return image
 }
 
 private fun PsBeContext.fromTransport(req: ImageReadRequest) {
