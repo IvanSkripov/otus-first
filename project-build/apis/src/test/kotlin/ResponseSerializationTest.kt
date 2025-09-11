@@ -8,6 +8,8 @@ import kotlin.test.assertEquals
 
 class ResponseSerializationTest {
 
+    // TODO дописать сериализацию для всех видов ответов
+
     private val responseError = ImageCreateResponse(
         result = ResponseResult.ERROR,
         errors = listOf( ResponseErrorValue("101", "Wrong request"))

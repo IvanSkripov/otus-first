@@ -194,7 +194,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "./open-api-postfull-labels.yaml#/components/schemas/Labels"
+                $ref: "./open-api-postfull-components..yaml#/components/schemas/LabelsResponse"
 
   /tags/list:
     post:
@@ -212,4 +212,4 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "./open-api-postfull-labels.yaml#/components/schemas/Tags"
+                $ref: "./open-api-postfull-components..yaml#/components/schemas/TagsResponse"

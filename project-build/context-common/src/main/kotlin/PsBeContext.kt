@@ -16,7 +16,7 @@ data class PsBeContext (
     //var timeStart: Instant =
 
     var request: PsImage = PsImage(),
-    var filterString: String,
+    var filterString: String = "",
 
     var response: PsImage = PsImage(),
     var responseList : MutableList<PsImage> = mutableListOf()

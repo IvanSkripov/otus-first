@@ -4,5 +4,7 @@ enum class PsState {
     NONE,
     RUNNING,
     FAILING,
-    FINISHING,
+    FINISHING;
+
+    fun isPositive(): Boolean = this == RUNNING || this == FINISHING
 }

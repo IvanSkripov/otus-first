@@ -38,6 +38,7 @@ class RequestSerializationTest {
     private val requestUpdate = ImageUpdateRequest(
         debug = this.debug,
         image = ImageItem(
+            imageId = IMAGE_ID,
             title = "Update Title",
             desc = "Update Image Description",
             tags = listOf("good", "nice"),

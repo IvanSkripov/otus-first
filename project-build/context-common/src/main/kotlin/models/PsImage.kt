@@ -10,15 +10,18 @@ data class PsImage (
     var id: PsImageId = PsImageId.NONE,
     var title: String = "",
     var desc: String = "",
-    val tags: List<String> = mutableListOf(),
-    val labels: List<PsLabel> = mutableListOf(),
+    val tags: MutableList<String> = mutableListOf(),
+    val labels: MutableList<PsLabel> = mutableListOf(),
 
-    var url: String = "",
-    // TODO: Обработка загрузки файла
-    var file: ByteArray = ByteArray(0)
+    var uploadUrl: String = "",
+    var imageUrl: String = "",
+    var previewUrl: String = "",
+    var permanentLinkUrl: String = "",
 
 ) {
 
+    // TODO: Обработка загрузки файла
+    var file: ByteArray = ByteArray(0)
 
     fun isEmpty() = this == NONE
     companion object {

@@ -130,7 +130,7 @@ components:
         imageId:
           type: string
       required:
-        - id
+        - imageId
 
     NullableImageId:
       type: object
@@ -195,7 +195,10 @@ components:
     ImageReadResponse:
       allOf:
         - $ref: "#/components/schemas/IResponse"
-        - $ref: "#/components/schemas/Image"
+        - type: object
+          properties:
+            image:
+              $ref: "#/components/schemas/Image"
 
     ImageLinkRequest:
       allOf:
@@ -217,6 +220,7 @@ components:
     ImageDownloadErrorResponse:
       allOf:
         - $ref: "#/components/schemas/IResponse"
+        - $ref: "#/components/schemas/NullableImageId"
 
     ImageUpdateRequest:
       allOf:
@@ -226,10 +230,13 @@ components:
           properties:
             image:
               $ref: "#/components/schemas/ImageItem"
+          required:
+            - image
 
     ImageUpdateResponse:
       allOf:
         - $ref: "#/components/schemas/IResponse"
+        - $ref: "#/components/schemas/NullableImageId"
 
     ImageDeleteRequest:
       allOf:
@@ -240,6 +247,7 @@ components:
     ImageDeleteResponse:
       allOf:
         - $ref: "#/components/schemas/IResponse"
+        - $ref: "#/components/schemas/NullableImageId"
 
     ImageSearchObject:
       type: object
@@ -247,7 +255,7 @@ components:
         searchCreateria:
           type: string
       required:
-        - searchCreteria
+        - searchCreateria
 
     ImageSearchList:
       type: array
@@ -262,10 +270,29 @@ components:
           properties:
             search:
               $ref: "#/components/schemas/ImageSearchObject"
+          required:
+            - search
 
     ImageSearchResponse:
       allOf:
         - $ref: "#/components/schemas/IResponse"
-        - $ref: "#/components/schemas/ImageSearchList"
-      required:
-        - ImageSearchList
+        - type: object
+          properties:
+            list:
+              $ref: "#/components/schemas/ImageSearchList"
+
+    TagsResponse:
+      allOf:
+        - $ref: "#/components/schemas/IResponse"
+        - type: object
+          properties:
+            tags:
+              $ref: "open-api-postfull-labels.yaml#/components/schemas/Tags"
+
+    LabelsResponse:
+      allOf:
+        - $ref: "#/components/schemas/IResponse"
+        - type: object
+          properties:
+            labels:
+              $ref: "open-api-postfull-labels.yaml#/components/schemas/Labels"

@@ -22,4 +22,8 @@ components:
                 - wrongLink
                 - wrongImageSize
                 - wrongImageFormat
+          required:
+            - mode
+      required:
+        - debug
 
