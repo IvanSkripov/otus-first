@@ -1,0 +1,29 @@
+components:
+  schemas:
+    Debug:
+      type: object
+      properties:
+        debug:
+          title: DebugItem
+          type: object
+          properties:
+            mode:
+              type: string
+              enum:
+                - prod
+                - test
+                - stub
+            stub:
+              type: string
+              description: Перечисления всех стабов
+              enum:
+                - success
+                - wrongOwner
+                - wrongLink
+                - wrongImageSize
+                - wrongImageFormat
+          required:
+            - mode
+      required:
+        - debug
+

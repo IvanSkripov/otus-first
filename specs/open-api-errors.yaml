@@ -1,0 +1,37 @@
+components:
+  responses:
+    Unauthorized:
+      description: Несанкционированный запрос
+      content:
+        application/json:
+          schema:
+            title: UnauthorizedError
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+            required:
+              - code
+              - message
+    ErrorResponse:
+      description: >-
+        Возможные ошибки
+        * '101' - WrongOwner, Изображение НЕ принадлежит владельцу (id.owner == visitor)
+        * '102' - WrongLink, Невеная ссылка для закачки изображения
+        * '103' - WrongImageSize, Размер превышает 100 МБ 
+        * '104' - WrongImageFormat, Неверный формат загружаемого изображения
+      content:
+        application/json:
+          schema:
+            title: ResponseError
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+            required:
+              - code
+              - message

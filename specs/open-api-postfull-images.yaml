@@ -1,0 +1,215 @@
+openapi: 3.0.1
+info:
+  title: Picture Saver API
+  description: API description for Picture Saver Application
+  version: 0.0.1
+servers:
+  - url: 'https://api.example.com'
+paths:
+  /image/create:
+    post:
+      summary: Создание изображения и информации о нем
+      description: >-
+        *Бизнес-правило*: возможность заполнить название, описание, теги и метки
+        *Бизнес-правило*: проверка валидности ссылки
+        *Бизнес-правило*: проверка формата загружаемого файла
+        *Ограничения*: Минимальный размер файла до 100 МБ
+        *Ограничения*: После создания файл изображения заменить будет нельзя.
+      tags:
+        - image
+      operationId: imageCreate
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "./open-api-postfull-components..yaml#/components/schemas/ImageCreateRequest"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./open-api-postfull-components..yaml#/components/schemas/ImageCreateResponse"
+
+
+
+  /image/read:
+    post:
+      summary: Получение информации об изображении
+      description: >-
+        - *Бизнес-правило*: Изображение принадлежит владельцу (id.owner == visitor)
+      tags:
+        - image
+      operationId: imageRead
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./open-api-postfull-components..yaml#/components/schemas/ImageReadRequest"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./open-api-postfull-components..yaml#/components/schemas/ImageReadResponse"
+
+  /image/link:
+    post:
+      summary: Получение public link на изображение.
+      description: >-
+        Public link не требует авторизации и может быть размещен на маркетплейсе, сайте и т.д.
+        *Бизнес-правило*: Изображение принадлежит владельцу (id.owner == visitor)
+        *Ограничения*: Ссылка, полученная через link является валидной либо в объеме дисковой квоты на публичные изображения для пользователя, либо в течении времени жизни, заданного пользователем
+      tags:
+        - image
+      operationId: imageLink
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./open-api-postfull-components..yaml#/components/schemas/ImageLinkRequest"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./open-api-postfull-components..yaml#/components/schemas/ImageLinkResponse"
+
+  /image/download:
+    post:
+      summary: Скачивание изображения
+      description: >-
+        *Бизнес-правило*: Изображение принадлежит владельцу (id.owner == visitor)
+      tags:
+        - image
+      operationId: imageDownload
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./open-api-postfull-components..yaml#/components/schemas/ImageDownloadRequest"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '500':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "./open-api-postfull-components..yaml#/components/schemas/ImageDownloadErrorResponse"
+
+  /images/update:
+    post:
+      summary: Скачивание изображения
+      description: >-
+        *Бизнес-правило*: Изображение принадлежит владельцу (id.owner == visitor)
+        *Бизнес-правило*: Новые теги добавляются в общий список
+      tags:
+        - image
+      operationId: imageUpdate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./open-api-postfull-components..yaml#/components/schemas/ImageUpdateRequest"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./open-api-postfull-components..yaml#/components/schemas/ImageUpdateResponse"
+
+  /image/delete:
+    post:
+      summary: Удаление изображения
+      description: >-
+        *Бизнес-правило*: Только владелец может удалять изображение (id.owner == visitor)
+      tags:
+        - image
+      operationId: imageDelete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./open-api-postfull-components..yaml#/components/schemas/ImageDeleteRequest"
+      responses:
+        '200':
+          description: OK¶
+          content:
+            application/json:
+              schema:
+                $ref: "./open-api-postfull-components..yaml#/components/schemas/ImageDeleteResponse"
+
+  /image/search:
+    post:
+      summary: Поиск изображений
+      description: >-
+        *Бизнес-правило*: Возвращает список найденных изображений по заданным критериям
+        *Бизнес-правило*: Реализована пагинация
+        *Бизнес-правило*: Только владелец может удалять изображение (id.owner == visitor)
+      tags:
+        - image
+      operationId: imageSearch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./open-api-postfull-components..yaml#/components/schemas/ImageSearchRequest"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./open-api-postfull-components..yaml#/components/schemas/ImageSearchResponse"
+
+
+
+  /labels/list:
+    post:
+      summary: Вывод списка возможных меток
+      description: >-
+        Метки представляют собой элементы метаданных изображений, аналогично EXIF, IPTC. Список расширяется только от версии к версии продукта (при расширении стандартов хранения изображений)
+           - *Бизнес-правило*: Редактирование списка меток (Create, Update, Delete) выполняет администратор. На уровне MVP - задаются записями в БД
+      tags:
+        - special
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./open-api-postfull-components..yaml#/components/schemas/LabelsResponse"
+
+  /tags/list:
+    post:
+      summary: Вывод списка всех тегов пользователя\
+      description: >-
+        - *Бизнес-правило*: Теги создаются вручную или автоматически при загрузке, аннотировании или редактировании объекта
+        - *Бизнес-правило*: Выводится список тегов для всех изображений, принадлежащих пользователю
+        - *Бизнес-правило*: Create/Delete - в момент создания, или обновления изображения пользователь добавляет или удаляет новую строку в/из список(а) тегов
+        - *Бизнес-правило*: Редактирование тега не предусмотрено
+      tags:
+        - special
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./open-api-postfull-components..yaml#/components/schemas/TagsResponse"

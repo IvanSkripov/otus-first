@@ -1,0 +1,112 @@
+components:
+  schemas:
+    ImageBase:
+      type: object
+      description: Базовый класс для изображения для создания
+      properties:
+        title:
+          description: Название
+          type: string
+        desc:
+          description: Детальное описание изображение
+          type: string
+        tags:
+          $ref: "#/components/schemas/Tags"
+        labels:
+          $ref: "#/components/schemas/Labels"
+
+    ImageSource:
+      oneOf:
+#      allOf:
+        - type: object
+          title: linkToDownload
+          properties:
+            link:
+              type: string
+              format: uri
+          required:
+              - linkToDownload
+        - type: object
+          title: downloadedFile
+          properties:
+            file:
+              type: string
+              format: binary
+          required:
+            - downloadedFile
+      discriminator:
+        propertyName: source
+
+    ImageItem:
+      allOf:
+        - $ref: '#/components/schemas/ImageBase'
+        - type: object
+          properties:
+            id:
+              description: Идентификатор изображения
+              type: string
+          required:
+            - id
+
+    ImageCreateRequest:
+      allOf:
+        - $ref: "#/components/schemas/ImageBase"
+        - $ref: "#/components/schemas/ImageSource"
+
+#    ImageCreateRequest:
+#      type: object
+#      properties:
+#        str:
+#          type: string
+#        num:
+#          type: number
+
+
+    Image:
+      allOf:
+        - $ref: "#/components/schemas/ImageItem"
+        - type: object
+          properties:
+            image:
+              description: Ссылка на изображение
+              type: string
+              format: uri
+            preview:
+              description: Ссылка на preview
+              type: string
+              format: uri
+          required:
+            - image
+            - preview
+
+    Label:
+      type: object
+      description: Элемент метаинформации. Метка
+      properties:
+        key:
+          type: string
+        desc:
+          type: string
+        value_:
+          type: string
+      required:
+        - key
+        - desc
+
+    Labels:
+      type: array
+      items:
+        $ref: "#/components/schemas/Label"
+
+    Tags:
+      type: array
+      items:
+        type: string
+
+  parameters:
+    IdParam:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
