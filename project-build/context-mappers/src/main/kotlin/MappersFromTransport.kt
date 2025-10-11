@@ -8,6 +8,7 @@ import ru.otus.kotlin.course.common.stubs.PsStubs
 import ru.otus.kotlin.course.mappers.exception.UnknownOperationException
 
 
+
 fun PsBeContext.fromTransport(request: IRequest) = when (request) {
     is ImageReadRequest -> fromTransport(request)
     is ImageDeleteRequest -> fromTransport(request)
