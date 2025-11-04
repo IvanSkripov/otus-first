@@ -1,5 +1,6 @@
 [versions]
 kotlin = "2.1.21"
+#kotlin = "2.0.0"
 
 openapi-generator = "7.12.0"
 jackson = "2.18.3"
@@ -31,6 +32,9 @@ coroutines-reactive = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-react
 coroutines-reactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor", version.ref = "coroutines" }
 coroutines-reactor-extentions = { module = "io.projectreactor.kotlin:reactor-kotlin-extensions" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
+
+# KLOGGING ---
+klogging = { module = "io.klogging:klogging-jvm",  version = "0.10.1"}
 
 
 # TESTS

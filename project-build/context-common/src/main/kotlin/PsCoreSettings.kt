@@ -4,7 +4,7 @@ import ru.otus.kotlin.course.common.logger.IPsLogger
 import ru.otus.kotlin.course.common.ws.IWsSessionsRepo
 
 data class PsCoreSettings (
-    val loggerProvider: IPsLogger = IPsLogger(),
+    val loggerProvider: IPsLogger = IPsLogger.DEFAULT,
     val wsSession: IWsSessionsRepo = IWsSessionsRepo.NONE
 ) {
     companion object {

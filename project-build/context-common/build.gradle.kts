@@ -3,5 +3,6 @@ plugins {
 }
 
 dependencies {
+    implementation(libs.klogging)
     testImplementation(kotlin("test-junit"))
 }
