@@ -1,12 +1,13 @@
 package ru.otus.kotlin.course.common.logger
 
+import io.klogging.Klogger
 import kotlin.reflect.KClass
 
 class PsLoggerProvider (
-    private val provider: (String) -> IPsLogger  = { IPsLogger.DEFAULT }
-) {
-    fun logger(loggerId: String): IPsLogger = provider(loggerId)
-    fun logger(clazz: KClass<*>): IPsLogger = provider(clazz.qualifiedName ?: clazz.simpleName ?: "unknown class")
+)  {
+    fun logger(loggerId: String): Klogger = io.klogging.logger(loggerId)
+    fun logger(clazz: KClass<*>): Klogger = io.klogging.logger(clazz.qualifiedName ?: clazz.simpleName ?: "unknown class")
 }
-
+//logProvider.logger(clazz)
+// logger.info
 //fun psLoggerLogback()
