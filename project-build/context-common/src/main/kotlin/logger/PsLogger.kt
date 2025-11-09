@@ -23,3 +23,19 @@ suspend fun <T> Klogger.doWithLog(
     log(Level.ERROR, "Failed ${event}",  e)
     throw e
 }
+
+suspend fun <T> Klogger.doWithError(
+    event: String,
+    throwRequired: Boolean = true,
+    block: suspend () -> T
+) = try {
+    val result = block()
+    result
+} catch (e: Throwable) {
+    log (
+        Level.ERROR,
+        "Failed ${event} Excepton ${e}",
+        e
+    )
+    if (throwRequired) { throw e } else { null }
+}

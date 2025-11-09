@@ -39,6 +39,12 @@ fun stubResponseError(stub: PsStubs ): PsBeContext {
     }
 }
 
+// ==== Stub Context  ===============
+
+fun getStub(context: PsBeContext): PsImage = when(context.command) {
+    PsCommand.READ -> PsImageStubsItems.FULL_TO_PSIMAGE
+    else -> throw IllegalStateException("Wrong command")
+}
 
 // ==== To Transport STUB ===============
 fun stubCreateToTransport(): Pair<PsBeContext, ImageCreateResponse> {
