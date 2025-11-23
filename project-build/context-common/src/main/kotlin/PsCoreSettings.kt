@@ -1,12 +1,11 @@
 package ru.otus.kotlin.course.common
 
-import ru.otus.kotlin.course.common.logger.IPsLogger
 import ru.otus.kotlin.course.common.logger.PsLoggerProvider
 import ru.otus.kotlin.course.common.ws.IWsSessionsRepo
 
 data class PsCoreSettings (
     val loggerProvider: PsLoggerProvider,
-    val wsSession: IWsSessionsRepo = IWsSessionsRepo.NONE
+    val wsSessions: IWsSessionsRepo = IWsSessionsRepo.NONE
 ) {
 //    companion object {
 //        val NONE = PsCoreSettings()

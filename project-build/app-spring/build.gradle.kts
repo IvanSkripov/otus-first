@@ -9,14 +9,15 @@ dependencies {
 	implementation(kotlin("stdlib"))
 	implementation(libs.spring.webflux)
 	implementation(libs.spring.webflux.ui)
-	implementation(libs.spring.websocket)
-	implementation(libs.spring.kafka)
+	// implementation(libs.spring.websocket)
+	// implementation(libs.spring.kafka)
 	implementation(libs.spring.actuator)
 	implementation(libs.coroutines.core)
 	implementation(libs.coroutines.reactor)
 	implementation(libs.coroutines.reactive)
 	implementation(libs.coroutines.reactor.extentions)
 	implementation(libs.kotlin.reflect)
+	implementation(libs.klogging)
 
  	// Subprojects
 

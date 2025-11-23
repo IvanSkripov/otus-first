@@ -10,5 +10,7 @@ enum class PsCommand {
     DOWNLOAD,
     SEARCH,
     TAGS,
-    LABELS
+    LABELS,
+    INIT,       // For WS processing
+    FINISHED,   // For WS processing
 }

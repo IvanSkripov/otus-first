@@ -87,7 +87,7 @@ class RequestSerializationTest {
         assertContains(json, Regex("\"stub\":\\s*\"wrongLink\""))
         assertContains(json, Regex("\"requestType\":\\s*\"update\""))
 
-
+        println("${apiRequestSerialize(requestRead)}");
     }
 
     @Test

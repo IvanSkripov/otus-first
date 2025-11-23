@@ -18,8 +18,27 @@ fun PsBeContext.toTransport(): IResponse = when(command) {
     PsCommand.SEARCH -> toTransportSearch()
     PsCommand.TAGS -> toTransportTags()
     PsCommand.LABELS -> toTransportLabels()
+    PsCommand.INIT -> toTransportInit()
+    PsCommand.FINISHED -> object : IResponse {
+        override val responseType: String? = null
+        override val result: ResponseResult = ResponseResult.SUCCESS
+        override val errors: List<ResponseErrorValue>? = null
+    }
     PsCommand.NONE -> throw UnknownOperationException("${PsCommand.NONE}")
 }
+
+fun Throwable.asError(
+    code: String = "unknown",
+    group: String = "exceptions",
+    message: String = this.message ?: ""
+) = PsError(
+    code = code,
+    group = group,
+    field = "",
+    message = message,
+    exception = this
+
+)
 
 private fun PsBeContext.toTransportCreate(): ImageCreateResponse = ImageCreateResponse (
     result = state.toResult(),
@@ -80,6 +99,11 @@ private fun PsBeContext.toTransportDownloadFalse(): ImageDownloadErrorResponse {
     )
 }
 
+private fun PsBeContext.toTransportInit() = WSInitResponse (
+    result = state.toResult(),
+    errors = errors.toTransportErrors()
+)
+
 // ==========================================
 
 private fun PsImage.toTransportImage(): Image = toTransportImageNullable()!!.let { it }
@@ -130,3 +154,5 @@ private fun PsLabel.toTransport(): Label = Label(
     desc,
     value
 )
+
+

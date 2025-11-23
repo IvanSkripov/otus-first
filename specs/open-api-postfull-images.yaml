@@ -23,7 +23,13 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: "./open-api-postfull-components..yaml#/components/schemas/ImageCreateRequest"
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                meta:
+                  $ref: "./open-api-postfull-components..yaml#/components/schemas/ImageCreateRequest"
       responses:
         '200':
           description: OK
