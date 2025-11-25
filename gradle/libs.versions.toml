@@ -36,6 +36,8 @@ kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 # KLOGGING ---
 klogging = { module = "io.klogging:klogging-jvm",  version = "0.10.1"}
 
+# Databases
+db-cache4k = "io.github.reactivecircus.cache4k:cache4k:0.13.0"
 
 # TESTS
 test-spring-boot = { module = "org.springframework.boot:spring-boot-starter-test" }

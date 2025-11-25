@@ -42,6 +42,8 @@ fun stubResponseError(stub: PsStubs ): PsBeContext {
     }
 }
 
+fun getDefaultId() = IMAGE_ID
+
 // ==== Stub Context  ===============
 
 fun getStub(context: PsBeContext): PsImage = when(context.command) {
