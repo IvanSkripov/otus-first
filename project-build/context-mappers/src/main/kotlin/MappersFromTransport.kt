@@ -1,12 +1,12 @@
 package ru.otus.kotlin.course.mappers
 
 
+import ru.otus.kotlin.course.api.v1.apiMapper
 import ru.otus.kotlin.course.api.v1.models.*
 import ru.otus.kotlin.course.common.PsBeContext
 import ru.otus.kotlin.course.common.models.*
 import ru.otus.kotlin.course.common.stubs.PsStubs
 import ru.otus.kotlin.course.mappers.exception.UnknownOperationException
-
 
 fun PsBeContext.fromTransport(request: IRequest) = when (request) {
     is ImageReadRequest -> fromTransport(request)
@@ -16,6 +16,13 @@ fun PsBeContext.fromTransport(request: IRequest) = when (request) {
     is ImageSearchRequest -> fromTransport(request)
     is ImageUpdateRequest -> fromTransport(request)
     else -> throw UnknownOperationException(request.requestType ?: "NULL")
+}
+
+fun PsBeContext.fromTransport(req: ImageCreateRequest, file: ByteArray) {
+    command = PsCommand.CREATE
+    request = req.toInternal(file)
+    workMode = req.debug.fromTransportToWorkMode()
+    stubCase = req.debug.fromTransportToStub()
 }
 
 private fun DebugItem.fromTransportToWorkMode(): PsWorkMode = when (mode) {
@@ -46,6 +53,18 @@ private fun ImageItem.toInternal(): PsImage {
     this.labels?.let {
         it.forEach { image.labels.add(PsLabel(it.key, it.desc ?: "", it.value ?: "")) }
     }
+    return image
+}
+
+private fun ImageCreateRequest.toInternal(file: ByteArray): PsImage {
+    val image = PsImage()
+
+    image.title = this?.image?.title ?: ""
+    image.file = file
+    // TODO: process correctly URL and File
+    //if (this.source?.sourceValue is ImageLinkRequest?)
+    // if (imageUrl = obj?.source?.sourceValue.sourceType)
+
     return image
 }
 

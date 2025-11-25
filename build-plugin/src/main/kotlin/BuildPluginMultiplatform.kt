@@ -49,6 +49,13 @@ private fun KotlinMultiplatformExtension.configureTargets(project: Project) {
 
     jvm {
         compilations.configureEach {
+//  To configure compilation compiler options use 'compileTaskProvider':
+//     compilation.compileTaskProvider.configure{
+//      compilerOptions {}}"
+//           compileTaskProvider.configure {
+//                jvmTarget.set(JvmTarget.valueOf("JVM_${libs.versions.jvm.compiler.get()}"))
+//           }
+
             compilerOptions.configure {
                 jvmTarget.set(JvmTarget.valueOf("JVM_${libs.versions.jvm.compiler.get()}"))
             }

@@ -2,6 +2,7 @@ package ru.otus.kotlin.course.common
 
 import ru.otus.kotlin.course.common.models.*
 import ru.otus.kotlin.course.common.stubs.PsStubs
+import ru.otus.kotlin.course.common.ws.IWsSession
 
 
 data class PsBeContext (
@@ -14,6 +15,7 @@ data class PsBeContext (
 
     var requestId: PsRequestId = PsRequestId.NONE,
     //var timeStart: Instant =
+    var wsSession: IWsSession = IWsSession.NONE,
 
     var request: PsImage = PsImage(),
     var filterString: String = "",

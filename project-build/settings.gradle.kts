@@ -31,7 +31,7 @@ include(":apis")
 include(":context-common")
 include(":context-mappers")
 include(":context-stubs")
-
+include(":app-spring")
 
 
 

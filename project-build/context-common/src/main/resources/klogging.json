@@ -1,0 +1,23 @@
+{
+  "sinks": {
+    "stdout": {
+      "renderWith": "RENDER_STANDARD",
+      "sendTo": "STDOUT"
+    }
+  },
+  "logging": [
+    {
+      "fromLoggerBase": "ru.otus.kotlin",
+      "levelRanges": [
+        {
+          "fromMinLevel": "TRACE",
+          "toSinks": [
+            "stdout"
+          ]
+        }
+      ]
+    }
+  ],
+  "kloggingMinLogLevel": "DEBUG",
+  "minDirectLogLevel": "ERROR"
+}

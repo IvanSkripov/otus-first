@@ -12,4 +12,3 @@ rootProject.name = "otus-first"
 
 includeBuild("lessons")
 includeBuild("project-build")
-

@@ -46,6 +46,10 @@ components:
             link: "#/components/schemas/ImageLinkResponse"
             download: "#/components/schemas/ImageDownloadErrorResponse"
             search: "#/components/schemas/ImageSearchResponse"
+            ws-init: "#/components/schemas/WSInitResponse"
+            labels: "#/components/schemas/LabelsResponse"
+            tags: "#/components/schemas/TagsResponse"
+
 
     ResponseResult:
       type: string
@@ -296,3 +300,11 @@ components:
           properties:
             labels:
               $ref: "open-api-postfull-labels.yaml#/components/schemas/Labels"
+
+    WSInitResponse:
+      allOf:
+        - $ref: "#/components/schemas/IResponse"
+        - type: object
+          properties:
+            initInfo:
+              type: string

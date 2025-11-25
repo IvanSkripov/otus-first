@@ -3,18 +3,21 @@ package ru.otus.kotlin.course.common.stubs
 import ru.otus.kotlin.course.api.v1.models.*
 import ru.otus.kotlin.course.common.PsBeContext
 import ru.otus.kotlin.course.common.models.*
+import java.io.File
 import java.net.URI
+import java.net.URL
 
 private val IMAGE_ID = "123"
 private val IMAGE_TITLE = "Update Title"
 private val IMAGE_DESC = "Update Image Description"
 private val SEARCH_STRING = "Search String is here"
+private val PERM_LINK = "www.google.com"
 private val TAGS = mutableListOf("good", "nice")
 private val ERORS = listOf(ResponseErrorValue("1", "4", "2", "3"))
 private val ERORS_PS = mutableListOf(PsError("1", "2", "3", "4"))
 private val LABELS = listOf(Label("1", "2", "3"))
 private val LABELS_PS = mutableListOf(PsLabel("1", "2", "3"))
-
+private val BYTES = byteArrayOf(0x30, 0x31, 0x32)
 
 
 fun <R: IRequest> prepareReq(req: R, block: R.() -> Unit): R {
@@ -39,6 +42,25 @@ fun stubResponseError(stub: PsStubs ): PsBeContext {
     }
 }
 
+// ==== Stub Context  ===============
+
+fun getStub(context: PsBeContext): PsImage = when(context.command) {
+    PsCommand.CREATE -> PsImage( id = PsImageId(IMAGE_ID))
+    PsCommand.READ -> PsImageStubsItems.FULL_TO_PSIMAGE
+    PsCommand.UPDATE -> PsImage(id = PsImageId(IMAGE_ID))
+    PsCommand.DELETE -> PsImage(id = PsImageId(IMAGE_ID))
+    PsCommand.LINK -> PsImage(id = PsImageId(IMAGE_ID), permanentLinkUrl = PERM_LINK )
+    PsCommand.DOWNLOAD -> {
+        val img = PsImage( id = PsImageId(IMAGE_ID))
+        img.file = BYTES
+        img
+    }
+//    PsCommand.TAGS,
+//    PsCommand.LABELS ->
+    else -> throw IllegalStateException("Wrong command")
+}
+
+fun getStabImages() = listOf(PsImageStubsItems.FULL_TO_PSIMAGE, PsImageStubsItems.FULL_TO_PSIMAGE)
 
 // ==== To Transport STUB ===============
 fun stubCreateToTransport(): Pair<PsBeContext, ImageCreateResponse> {
@@ -403,6 +425,90 @@ fun stubSearchFromTransport(): Pair<ImageSearchRequest, PsBeContext> {
     )
 }
 
+// ==== Full Cycle Stubs ===========
+
+fun  stubRead(flag: Boolean = true) = Pair<ImageReadRequest, ImageReadResponse> (
+    ImageReadRequest(
+        requestType = "read",
+        debug = PsImageStubsItems.DBG_OK,
+        imageId = IMAGE_ID
+    ), ImageReadResponse (
+        responseType = if (flag) "read" else null,
+        result = ResponseResult.SUCCESS,
+        image = PsImageStubsItems.FULL_TO_IMAGE
+    )
+)
+
+fun  stubUpdate(flag: Boolean = true) = Pair<ImageUpdateRequest, ImageUpdateResponse> (
+    ImageUpdateRequest(
+        debug = PsImageStubsItems.DBG_OK,
+        image = PsImageStubsItems.FULL_FROM_IMAGE
+    ), ImageUpdateResponse (
+        responseType = if (flag) "update" else null,
+        result = ResponseResult.SUCCESS,
+        imageId = IMAGE_ID
+    )
+)
+
+fun  stubDelete(flag: Boolean = true) = Pair<ImageDeleteRequest, ImageDeleteResponse> (
+    ImageDeleteRequest(
+        debug = PsImageStubsItems.DBG_OK,
+        imageId = IMAGE_ID
+    ), ImageDeleteResponse (
+        responseType = if (flag) "delete" else null,
+        result = ResponseResult.SUCCESS,
+        imageId = IMAGE_ID
+    )
+)
+
+fun  stubLink(flag: Boolean = true) = Pair<ImageLinkRequest, ImageLinkResponse> (
+    ImageLinkRequest(
+        debug = PsImageStubsItems.DBG_OK,
+        imageId = IMAGE_ID
+    ), ImageLinkResponse (
+        responseType = if (flag) "link" else null,
+        result = ResponseResult.SUCCESS,
+        url = URI(PERM_LINK)
+    )
+)
+
+fun  stubSearch(flag: Boolean = true) = Pair<ImageSearchRequest, ImageSearchResponse> (
+    ImageSearchRequest(
+        debug = PsImageStubsItems.DBG_OK,
+        search = ImageSearchObject(SEARCH_STRING)
+    ), ImageSearchResponse (
+        responseType = if (flag) "search" else null,
+        result = ResponseResult.SUCCESS,
+        list = listOf(PsImageStubsItems.FULL_TO_IMAGE, PsImageStubsItems.FULL_TO_IMAGE)
+    )
+)
+
+fun  stubDownload() = Pair<ImageDownloadRequest, ByteArray> (
+    ImageDownloadRequest(
+        debug = PsImageStubsItems.DBG_OK,
+        imageId = IMAGE_ID
+    ), BYTES
+)
+
+fun  stubCreate(flag: Boolean = true) = Pair<ImageCreateRequest, ImageCreateResponse> (
+    ImageCreateRequest(
+        debug = PsImageStubsItems.DBG_OK,
+        image = ImageCreateObject(
+            title = IMAGE_TITLE,
+            source = ImageSourceObject( sourceValue = ImageSourceFile(
+                sourceType = "file",
+                file = File("file")
+            ))
+        )
+    ),
+    ImageCreateResponse(
+        responseType = if (flag) "create"  else null,
+        result = ResponseResult.SUCCESS,
+        imageId = IMAGE_ID
+    )
+)
+
+
 // ==== STUB Helpers ===============
 
 object PsImageStubsItems {
@@ -411,7 +517,7 @@ object PsImageStubsItems {
         stub = DebugItem.Stub.WRONG_LINK)
 
     val DBG_OK = DebugItem (
-        mode = DebugItem.Mode.TEST,
+        mode = DebugItem.Mode.STUB,
         stub = DebugItem.Stub.SUCCESS)
 
     val FULL_TO_PSIMAGE = PsImage(
