@@ -45,10 +45,6 @@ class AppSpringWsTest : AppWsBase() {
     @Test
     fun readImage() {
         val p = stubRead(false)
-//        val f: WebSocketSession.() -> Flux<WebSocketMessage> = {
-//            listOf(p.first).asFlow().map { textMessage(serializeRq(it)) }.asFlux()
-//        }
-
         sendAndReceive <ImageReadRequest, IResponse> (p.first) { pl ->
             val f = pl[0]
             val s = pl[1]

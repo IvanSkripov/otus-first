@@ -43,19 +43,26 @@ class PsProcessor() : IPsProcessor, Klogging {
     }
 
     private suspend fun execTest(ctx: PsBeContext) {
+        ctx.state = PsState.RUNNING
         when(ctx.command) {
             PsCommand.CREATE -> {
                 val res = ctx.imageRepo.createImage(DBImageRequest(ctx.request))
                 when (res) {
                     is DBGetImage -> ctx.response = res.image
-                    is DBError -> ctx.errors.add(res.asPsError())
+                    is DBError -> {
+                        ctx.errors.add(res.asPsError())
+                        ctx.state = PsState.FAILING
+                    }
                 }
             }
             PsCommand.READ -> {
                 val res = ctx.imageRepo.readImage(ctx.request.id.toDB())
                 when (res) {
                     is DBGetImage -> ctx.response = res.image
-                    is DBError -> ctx.errors.add(res.asPsError())
+                    is DBError -> {
+                        ctx.errors.add(res.asPsError())
+                        ctx.state = PsState.FAILING
+                    }
                 }
             }
             else -> TODO("Not implemented")
