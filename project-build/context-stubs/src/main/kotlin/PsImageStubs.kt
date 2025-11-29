@@ -3,9 +3,9 @@ package ru.otus.kotlin.course.common.stubs
 import ru.otus.kotlin.course.api.v1.models.*
 import ru.otus.kotlin.course.common.PsBeContext
 import ru.otus.kotlin.course.common.models.*
+import ru.otus.kotlin.course.common.repo.ERROR_GROUP_REPO
 import java.io.File
 import java.net.URI
-import java.net.URL
 
 private val IMAGE_ID = "123"
 private val IMAGE_TITLE = "Update Title"
@@ -35,12 +35,13 @@ fun prepareCtx(ctx: PsBeContext, block: PsBeContext.() -> Unit): PsBeContext {
     return ctx
 }
 
-fun stubResponseError(stub: PsStubs ): PsBeContext {
-    return prepareCtx(PsBeContext()) {
-        state = PsState.FAILING
-        errors.add(PsError(code = stub.toString(), message = "Message ${stub.toString()}"))
-    }
-}
+// TODO : Удалить функцию
+//fun stubResponseError(stub: PsStubs ): PsBeContext {
+//    return prepareCtx(PsBeContext()) {
+//        state = PsState.FAILING
+//        errors.add(PsError(code = stub.toString(), message = "Message ${stub.toString()}"))
+//    }
+//}
 
 fun getDefaultId() = IMAGE_ID
 
@@ -62,7 +63,31 @@ fun getStub(context: PsBeContext): PsImage = when(context.command) {
     else -> throw IllegalStateException("Wrong command")
 }
 
-fun getStabImages() = listOf(PsImageStubsItems.FULL_TO_PSIMAGE, PsImageStubsItems.FULL_TO_PSIMAGE)
+fun getStubError(context: PsBeContext) {
+    require(context.workMode == PsWorkMode.STUB)
+    require(context.stubCase != PsStubs.SUCCESS)
+    require(context.stubCase != PsStubs.NONE)
+
+
+//    #  Возможные ошибки
+//    #  * '101' - WrongOwner, Изображение НЕ принадлежит владельцу (id.owner == visitor)
+//    #  * '102' - WrongLink, Невеная ссылка для закачки изображения
+//    #  * '103' - WrongImageSize, Размер превышает 100 МБ
+//    #  * '104' - WrongImageFormat, Неверный формат загружаемого изображения
+
+    val err = when(context.stubCase) {
+        PsStubs.DB_ERROR -> PsImageStubsItems.DB_ERROR
+        PsStubs.WRONG_OWNER -> PsImageStubsItems.WRONG_OWNER
+        PsStubs.WRONG_LINK -> PsImageStubsItems.WRONG_LINK
+        PsStubs.WRONG_IMAGE_SIZE -> PsImageStubsItems.WRONG_IMAGE_SIZE
+        PsStubs.WRONG_IMAGE_FORMAT ->  PsImageStubsItems.WRONG_IMAGE_FORMAT
+        else -> TODO("Incorrect scenario")
+    }
+    context.errors.add(err)
+    context.state = PsState.FAILING
+}
+
+fun getStubImages() = listOf(PsImageStubsItems.FULL_TO_PSIMAGE, PsImageStubsItems.FULL_TO_PSIMAGE)
 
 // ==== To Transport STUB ===============
 fun stubCreateToTransport(): Pair<PsBeContext, ImageCreateResponse> {
@@ -420,7 +445,7 @@ fun stubSearchFromTransport(): Pair<ImageSearchRequest, PsBeContext> {
         ),
         PsBeContext(
             command = PsCommand.SEARCH,
-            workMode = PsWorkMode.TEST,
+            workMode = PsWorkMode.STUB,
             stubCase = PsStubs.SUCCESS,
             filterString = SEARCH_STRING
         )
@@ -510,6 +535,21 @@ fun  stubCreate(flag: Boolean = true) = Pair<ImageCreateRequest, ImageCreateResp
     )
 )
 
+fun stubReadErrors(stubError: DebugItem.Stub, error: ResponseErrorValue, flag: Boolean = true) = Pair<ImageReadRequest, ImageReadResponse> (
+    ImageReadRequest(
+        requestType = "read",
+        debug =  DebugItem (
+            mode = DebugItem.Mode.STUB,
+            stub = stubError
+        ),
+        imageId = IMAGE_ID
+    ), ImageReadResponse (
+        responseType = if (flag) "read" else null,
+        result = ResponseResult.ERROR,
+        errors = listOf(error)
+
+    )
+)
 
 // ==== STUB Helpers ===============
 
@@ -556,6 +596,37 @@ object PsImageStubsItems {
         desc = IMAGE_DESC,
         tags = TAGS,
         labels = LABELS_PS
+    )
+
+    val DB_ERROR = PsError(
+        code = "$ERROR_GROUP_REPO-internal-error",
+        field = "*",
+        group = "repo",
+        message = "Internal DB error"
+    )
+
+    val WRONG_OWNER = PsError(
+        code = "WrongOwner",
+        group = "permissions",
+        message = "Image doesn't belong to the owner (id.owner == visitor)"
+    )
+
+    val WRONG_LINK = PsError(
+        code = "WrongLink",
+        group = "uploading",
+        message = "Wrong link for uploading image"
+    )
+
+    val WRONG_IMAGE_SIZE = PsError(
+        code = "WrongImageSize",
+        group = "uploading",
+        message = "Size of the image is more than 100M"
+    )
+
+    val WRONG_IMAGE_FORMAT = PsError(
+        code = "WrongImageFormat",
+        group = "uploading",
+        message = "Wrong format of the uploading image"
     )
 
     val SIMPLE_REQUEST = PsImage(id = PsImageId(IMAGE_ID))

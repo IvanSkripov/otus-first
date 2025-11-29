@@ -2,9 +2,9 @@ package ru.otus.kotlin.course.common.repo
 
 import ru.otus.kotlin.course.common.models.PsImage
 
-abstract class RepoInitializer (
+class RepoInitializer (
+    val repo: IRepoInitializer,
     images: Collection<PsImage> = emptyList()
-) {
-    abstract fun save(objects: Collection<PsImage>): Collection<PsImage>
+) : IRepoInitializer by repo {
     val initObjects = save(images).toList()
 }

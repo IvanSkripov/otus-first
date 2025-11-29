@@ -20,7 +20,6 @@ data class DBError (
     val field: String = "Unknown",
     val e: Throwable? = null
 ): IDBResult {
-
     fun asPsError() = PsError(code = code, group = ERROR_GROUP_REPO, field = field, message = msg, exception = e)
 }
 
@@ -32,13 +31,12 @@ data class DBImageRequest (
 value class DBImageId (
     private val imageId: String
 ) {
-    constructor(param: PsImageId) : this(param.asString())
-
     fun isEmpty() = imageId == PsImageId.NONE.asString()
     fun asString() = imageId
     fun asPsImageId() = PsImageId(imageId)
-
 }
+
+fun PsImageId.toDB() = DBImageId(this.asString())
 
 data class DBImageSearchFilter(
     private val criteria: String

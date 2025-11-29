@@ -8,5 +8,12 @@ dependencies {
     implementation(libs.db.cache4k)
     implementation(projects.apis)
     implementation(projects.contextCommon)
-    testImplementation(kotlin("test-junit"))
+    implementation(libs.uuid)
+
+    testImplementation(kotlin("test"))
+    testImplementation(libs.test.coroutines)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

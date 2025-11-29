@@ -4,7 +4,7 @@ interface IImageRepo  {
     abstract suspend fun createImage(image: DBImageRequest): IDBResult
     abstract suspend fun readImage(id: DBImageId): IDBResult
     abstract suspend fun updateImage(image: DBImageRequest): IDBResult
-    abstract suspend fun deleteImage(id: DBImageRequest): IDBResult
+    abstract suspend fun deleteImage(id: DBImageId): IDBResult
     abstract suspend fun searchImages(criteria: DBImageSearchFilter): IDBResult
 
     companion object {
@@ -21,7 +21,7 @@ interface IImageRepo  {
                 TODO("Shouldn't be used")
             }
 
-            override suspend fun deleteImage(id: DBImageRequest): IDBResult {
+            override suspend fun deleteImage(id: DBImageId): IDBResult {
                 TODO("Shouldn't be used")
             }
 

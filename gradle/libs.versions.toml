@@ -17,6 +17,7 @@ plugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.
 plugin-binaryCompatibilityValidator = "org.jetbrains.kotlinx:binary-compatibility-validator:0.13.2"
 jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 jackson-datatype = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
+uuid = { module = "com.benasher44:uuid", version = "0.8.4"}
 # kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.6.1" }
 
 # SPRING ---

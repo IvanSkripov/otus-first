@@ -130,7 +130,7 @@ private fun PsImage.toTransportPermLink(): URI? =
 
 private fun PsImage.toTransportId() : String? = this.id.takeIf { it != PsImageId.NONE  }?.asString()
 
-private fun PsError.toTransport(): ResponseErrorValue = ResponseErrorValue (
+fun PsError.toTransport(): ResponseErrorValue = ResponseErrorValue (
     code = this.code,
     message = this.message,
     group = this.group,
