@@ -11,6 +11,8 @@ import ru.otus.kotlin.course.common.stubs.getStubImages
 import ru.otus.kotlin.course.common.stubs.getStub
 import ru.otus.kotlin.course.common.stubs.getStubError
 import ru.otus.kotlin.course.common.worker.IPsProcessor
+import com.benasher44.uuid.uuid4
+import ru.otus.kotlin.course.common.models.PsImage
 
 class PsProcessor() : IPsProcessor, Klogging {
     override suspend fun exec(ctx: PsBeContext) {
@@ -42,28 +44,44 @@ class PsProcessor() : IPsProcessor, Klogging {
         }
     }
 
+    // TODO: Generate real link
+    private val PERMANENT_URL = "www.otus-first.ru/permanent/"
+    private val PREVIEW_URL = "www.otus-first.ru/preview/"
+    private val IMAGE_URL = "www.otus-first.ru/image/"
+
     private suspend fun execTest(ctx: PsBeContext) {
         ctx.state = PsState.RUNNING
         when(ctx.command) {
             PsCommand.CREATE -> {
+                ctx.request.imageUrl = "${IMAGE_URL}${uuid4().toString()}"
+                ctx.request.previewUrl = "${PREVIEW_URL}${uuid4().toString()}"
                 val res = ctx.imageRepo.createImage(DBImageRequest(ctx.request))
-                when (res) {
-                    is DBGetImage -> ctx.response = res.image
-                    is DBError -> {
-                        ctx.errors.add(res.asPsError())
-                        ctx.state = PsState.FAILING
-                    }
-                }
+                resultUpdateContext(ctx, res)
             }
             PsCommand.READ -> {
                 val res = ctx.imageRepo.readImage(ctx.request.id.toDB())
-                when (res) {
-                    is DBGetImage -> ctx.response = res.image
-                    is DBError -> {
-                        ctx.errors.add(res.asPsError())
-                        ctx.state = PsState.FAILING
-                    }
+                resultUpdateContext(ctx, res)
+            }
+            PsCommand.DOWNLOAD -> {
+                val res = ctx.imageRepo.readImage(ctx.request.id.toDB())
+                resultUpdateContext(ctx, res)
+            }
+            PsCommand.LINK -> {
+                val res = ctx.imageRepo.readImage(ctx.request.id.toDB())
+                val old = getResultIfPositive(res)
+                if (old != null) {
+                    old.permanentLinkUrl = "${PERMANENT_URL}${uuid4().toString()}"
+                    val res = ctx.imageRepo.updateImage(DBImageRequest(old),)
+                    resultUpdateContext(ctx, res)
                 }
+            }
+            PsCommand.DELETE -> {
+                val res = ctx.imageRepo.deleteImage(ctx.request.id.toDB())
+                resultUpdateContext(ctx, res)
+            }
+            PsCommand.UPDATE -> {
+                val res = ctx.imageRepo.updateImage(DBImageRequest(ctx.request))
+                resultUpdateContext(ctx, res)
             }
             else -> TODO("Not implemented")
         }
@@ -71,5 +89,21 @@ class PsProcessor() : IPsProcessor, Klogging {
 
     private suspend fun execLogic(ctx: PsBeContext) {
        TODO("Implement PROD LOGIC")
+    }
+
+    private fun resultUpdateContext(ctx: PsBeContext, res: IDBResult) {
+        when (res) {
+            is DBGetImage -> ctx.response = res.image
+            is DBGetImages -> ctx.responseList = res.images.toMutableList()
+            is DBError -> {
+                ctx.errors.add(res.asPsError())
+                ctx.state = PsState.FAILING
+            }
+        }
+    }
+
+    private fun getResultIfPositive(res: IDBResult): PsImage?  = when(res) {
+        is DBGetImage -> res.image
+        else -> null
     }
 }

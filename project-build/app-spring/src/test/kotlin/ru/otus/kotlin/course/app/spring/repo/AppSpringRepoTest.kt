@@ -1,5 +1,6 @@
 package ru.otus.kotlin.course.app.spring.repo
 
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -11,6 +12,7 @@ import ru.otus.kotlin.course.app.spring.AppWsBase
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertNotNull
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AppSpringRepoTest: AppWsBase() {
@@ -19,50 +21,146 @@ class AppSpringRepoTest: AppWsBase() {
     var port: Int = 0
     override fun port(): Int = port
     val UNKNOWN_ID = "XXXX"
+    val CREATE_TITILE = "New Loaded File"
+    val UPDATE_TITILE = "Updated Title"
+    val DBG_TEST =  DebugItem(mode = DebugItem.Mode.TEST)
+    val BYTES = byteArrayOf(0x31, 0x32, 0x33)
+    val TAGS = listOf("New", "Home")
+    val LABELS = buildList<Label> {
+        add(Label("author", "Автор", "Энни Лейбовиц"))
+        add(Label("format", "Формат изображения", "PSD"))
+    }
 
     @Test
     fun imageProcessTest() {
-        val cr = ImageCreateRequest (
-            debug = DebugItem(
-                mode = DebugItem.Mode.TEST,
-            ),
-            image = ImageCreateObject(
-                title = "New Loaded File",
-                source = ImageSourceObject( sourceValue = ImageSourceFile(
-                    sourceType = "file",
-                    file = File("file")
-                ))
-            )
-        )
-        val data = apiCreateRequestToBytes(CreateRequest(cr,  byteArrayOf(0x31, 0x32, 0x33)))
+        val cr = getCreateReq(CREATE_TITILE)
+        val data = apiCreateRequestToBytes(CreateRequest(cr, BYTES))
         var imageId = UNKNOWN_ID
         sendAndReceive <ByteArray, IResponse> (data) { pl ->
-            val f = pl[0]
-            val s = pl[1]
-            println("${f}")
-            println("${s}")
-            assertIs<WSInitResponse>(f)
-            assertIs<ImageCreateResponse>(s)
-            assertEquals(ResponseResult.SUCCESS, s.result)
-            imageId = s.imageId ?: UNKNOWN_ID
-
+            val res = checkResultResponse<ImageCreateResponse>(pl)
+            imageId = res.imageId ?: UNKNOWN_ID
         }
 
         assertTrue (imageId != UNKNOWN_ID)
-        val rr = ImageReadRequest (
-            debug = DebugItem(
-                mode = DebugItem.Mode.TEST,
-            ),
-            imageId = imageId
-        )
+        val rr = getReadReq(imageId)
 
         sendAndReceive <ImageReadRequest, IResponse> (rr) { pl ->
-            val f = pl[0]
-            val s = pl[1]
-            println("${f}")
-            println("${s}")
-            assertIs<WSInitResponse>(f)
-            //assertEquals(cr.image.title, s)
+            val res = checkResultResponse<ImageReadResponse>(pl)
+            assertEquals(CREATE_TITILE, res.image?.title )
+        }
+
+        val dr = getDownloadReq(imageId)
+        sendAndReceive <ImageDownloadRequest, IResponse> (dr) { pl ->
+            val res = checkResultBytes(pl)
+            assertThat<ByteArray> (res).isEqualTo(BYTES)
+        }
+
+        val lr = getLinkReq(imageId)
+        sendAndReceive <ImageLinkRequest, IResponse> (lr) { pl ->
+            val res = checkResultResponse<ImageLinkResponse>(pl)
+            assertTrue( res.url != null )
+        }
+
+        var result: Image? = null
+        sendAndReceive <ImageReadRequest, IResponse> (rr) { pl ->
+            val res = checkResultResponse<ImageReadResponse>(pl)
+            result = res.image
+        }
+
+        assertNotNull(result)
+        val ur = getUpdateReq(imageId, result as Image)
+        sendAndReceive <ImageUpdateRequest, IResponse> (ur) { pl ->
+            val res = checkResultResponse<ImageUpdateResponse>(pl)
+        }
+
+        sendAndReceive <ImageReadRequest, IResponse> (rr) { pl ->
+            val res = checkResultResponse<ImageReadResponse>(pl)
+            assertEquals(res.image?.title, UPDATE_TITILE)
+            assertThat(res.image?.labels).isEqualTo(LABELS)
+            assertThat(res.image?.tags).isEqualTo(TAGS)
+        }
+
+        val del = getDeleteReq(imageId)
+        sendAndReceive <ImageDeleteRequest, IResponse> (del) { pl ->
+            val res = checkResultResponse<ImageDeleteResponse>(pl)
+        }
+
+        sendAndReceive <ImageReadRequest, IResponse> (rr) { pl ->
+            val res = checkResultError<ImageReadResponse>(pl)
+            println("[2] ---> ${res.errors?.get(0)}")
         }
     }
+
+    private inline fun <reified T: IResponse> checkResultResponse(list: List<Any>): T {
+        val f = list[0]
+        val s = list[1]
+        println("[0] ---> ${f}\n[1] ---> ${s}")
+        assertIs<WSInitResponse>(f)
+        assertIs<T> (s)
+        assertEquals(ResponseResult.SUCCESS, s.result)
+        assertTrue(s.errors?.isEmpty() ?: true)
+        return s as T
+    }
+
+    private fun checkResultBytes(list: List<Any>): ByteArray {
+        val f = list[0]
+        val s = list[1]
+        println("[0] ---> ${f}\n[1] ---> ${s}")
+        assertIs<WSInitResponse>(f)
+        assertIs<ByteArray> (s)
+        return s as ByteArray
+    }
+
+    private inline fun <reified T: IResponse> checkResultError(list: List<Any>): T {
+        val f = list[0]
+        val s = list[1]
+        println("[0] ---> ${f}\n[1] ---> ${s}")
+        assertIs<WSInitResponse>(f)
+        assertIs<T> (s)
+        assertEquals(ResponseResult.ERROR, s.result)
+        assertTrue(s.errors?.isNotEmpty()  ?: false)
+        return s as T
+    }
+
+    private fun getCreateReq(title: String) = ImageCreateRequest (
+        debug = DBG_TEST,
+        image = ImageCreateObject(
+            title = title,
+            source = ImageSourceObject( sourceValue = ImageSourceFile(
+                sourceType = "file",
+                file = File("file")
+            ))
+        )
+    )
+
+    private fun getReadReq(imageId: String) = ImageReadRequest (
+        debug = DBG_TEST,
+        imageId = imageId
+    )
+
+    private fun getUpdateReq(imageId: String, image: Image) = ImageUpdateRequest (
+        debug = DBG_TEST,
+        image = ImageItem(
+            imageId = image.imageId,
+            title = UPDATE_TITILE,
+            desc = image.desc,
+            labels = LABELS,
+            tags = TAGS
+        )
+    )
+
+    private fun getDownloadReq(imageId: String) = ImageDownloadRequest (
+        debug = DBG_TEST,
+        imageId = imageId
+    )
+
+    private fun getLinkReq(imageId: String) = ImageLinkRequest (
+        debug = DBG_TEST,
+        imageId = imageId
+    )
+
+    private fun getDeleteReq(imageId: String) = ImageDeleteRequest (
+        debug = DBG_TEST,
+        imageId = imageId
+    )
 }

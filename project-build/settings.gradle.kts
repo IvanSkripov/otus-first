@@ -26,7 +26,7 @@ plugins {
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-include(":starter")
+include(":postgre-repo")
 include(":apis")
 include(":context-common")
 include(":context-mappers")

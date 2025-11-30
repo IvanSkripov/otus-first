@@ -49,6 +49,7 @@ test-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", ve
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 openapi-generator = { id = "org.openapi.generator", version.ref = "openapi-generator" }
+jooq-generator = { id = "org.jooq.jooq-codegen-gradle", version = "3.19.28" }
 
 # SPRING ---
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }

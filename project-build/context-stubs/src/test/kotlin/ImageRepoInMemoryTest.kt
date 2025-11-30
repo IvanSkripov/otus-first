@@ -7,6 +7,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import ru.otus.kotlin.course.common.repo.*
 import ru.otus.kotlin.course.common.stubs.PsImageStubsItems
+import ru.otus.kotlin.course.common.stubs.repo.ImageEntity
 import kotlin.time.Duration.Companion.minutes
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -42,7 +43,7 @@ class ImageRepoInMemoryTest {
         initRepo(repo, listOf(PsImageStubsItems.FULL_TO_PSIMAGE))
         runRepoTest {
             val image = PsImageStubsItems.FULL_TO_PSIMAGE.copy(imageUrl = "www.kremlin.ru")
-            repo.updateImage(DBImageRequest( image))
+            repo.updateImage(DBImageRequest( image),)
             val res = repo.readImage(DBImageId(getDefaultId()))
             assertIs<DBGetImage>(res)
             val obj = res.image
@@ -52,7 +53,7 @@ class ImageRepoInMemoryTest {
 
     @Test
     fun createImageTest () {
-        val repo = ImageRepoInMemory(  )
+        val repo = ImageRepoInMemory( updateLogic = {old, new -> } )
         initRepo(repo, emptyList())
         runRepoTest {
             val cr = repo.createImage(DBImageRequest( PsImageStubsItems.FULL_TO_PSIMAGE))

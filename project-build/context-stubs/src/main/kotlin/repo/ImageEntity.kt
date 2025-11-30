@@ -5,18 +5,18 @@ import ru.otus.kotlin.course.common.models.PsImageId
 import ru.otus.kotlin.course.common.models.PsLabel
 
 data class ImageEntity (
-    private val id: String,
-    private val title: String = "",
-    private val desc: String = "",
-    private val tags: List<String> = listOf(),
-    private val labels: List<PsLabel> = listOf(),
+    val id: String,
+    val title: String = "",
+    val desc: String = "",
+    val tags: List<String> = listOf(),
+    val labels: List<PsLabel> = listOf(),
 
-    private val uploadUrl: String = "",
-    private val imageUrl: String = "",
-    private val previewUrl: String = "",
-    private val permanentLinkUrl: String = "",
+    val uploadUrl: String = "",
+    var imageUrl: String = "",
+    var previewUrl: String = "",
+    var permanentLinkUrl: String = "",
 
-    private val bytes: ByteArray = ByteArray(0)
+    var bytes: ByteArray = ByteArray(0)
 ) {
 
     constructor(image: PsImage): this (

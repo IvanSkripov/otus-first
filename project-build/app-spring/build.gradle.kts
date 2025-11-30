@@ -18,6 +18,7 @@ dependencies {
 	implementation(libs.coroutines.reactor.extentions)
 	implementation(libs.kotlin.reflect)
 	implementation(libs.klogging)
+	implementation(libs.uuid)
 
  	// Subprojects
 

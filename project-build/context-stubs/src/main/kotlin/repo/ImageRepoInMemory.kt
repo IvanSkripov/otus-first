@@ -12,7 +12,8 @@ import ru.otus.kotlin.course.common.models.PsImageId
 
 class ImageRepoInMemory (
     ttl: Duration = 2.minutes,
-    val randomId: () -> String = { uuid4().toString() }
+    val randomId: () -> String = { uuid4().toString() },
+    val updateLogic: (old: ImageEntity?, new: ImageEntity) -> Unit = ::updateEntity
 ): ImageRepoBase(), IRepoInitializer {
 
     private val mutex: Mutex = Mutex()
@@ -32,6 +33,7 @@ class ImageRepoInMemory (
         val key = randomId()
         val ret = req.image.copy(id = PsImageId(key))
         val entity = ImageEntity(ret)
+        entity.bytes = req.image.file.copyOf()
         mutex.withLock {
             cache.put(key, entity)
         }
@@ -57,6 +59,7 @@ class ImageRepoInMemory (
             when {
                 old == null -> errorNotFound(key)
                 else -> {
+                    updateLogic(old, entity)
                     cache.put(key, entity)
                     DBGetImage(req.image)
                 }
@@ -83,5 +86,14 @@ class ImageRepoInMemory (
         TODO("Not yet implemented")
     }
 
+}
 
+fun updateEntity(old: ImageEntity?, new: ImageEntity) {
+    if (new.imageUrl.isEmpty()) { new.imageUrl = old?.imageUrl ?: "" }
+    if (new.previewUrl.isEmpty()) { new.previewUrl = old?.previewUrl ?: "" }
+    if (new.permanentLinkUrl.isEmpty()) { new.permanentLinkUrl = old?.permanentLinkUrl ?: "" }
+
+    if (new.bytes.size == 0) {
+        new.bytes = old?.bytes?.copyOf() ?: ByteArray(0)
+    }
 }

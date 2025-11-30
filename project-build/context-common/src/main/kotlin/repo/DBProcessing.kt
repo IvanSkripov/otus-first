@@ -11,7 +11,7 @@ interface IDBResult
 data class DBGetImage ( val image: PsImage): IDBResult {
 }
 
-data class DBGetImages ( val image: List<PsImage>): IDBResult {
+data class DBGetImages ( val images: List<PsImage>): IDBResult {
 }
 
 data class DBError (
