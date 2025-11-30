@@ -7,6 +7,8 @@ jackson = "2.18.3"
 # kotlin-spring-ver = "1.9.25"
 spring-boot = "3.5.6"
 coroutines = "1.9.0"
+postgre-version = "42.7.3"
+studer-version = "10.1.1"
 
 # BASE
 jvm-compiler = "17"
@@ -37,8 +39,9 @@ kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 # KLOGGING ---
 klogging = { module = "io.klogging:klogging-jvm",  version = "0.10.1"}
 
-# Databases
+# DATABASES (POSTGRES)
 db-cache4k = "io.github.reactivecircus.cache4k:cache4k:0.13.0"
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgre-version" }
 
 # TESTS
 test-spring-boot = { module = "org.springframework.boot:spring-boot-starter-test" }
@@ -50,6 +53,9 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 openapi-generator = { id = "org.openapi.generator", version.ref = "openapi-generator" }
 jooq-generator = { id = "org.jooq.jooq-codegen-gradle", version = "3.19.28" }
+studer = { id = "nu.studer.jooq", version.ref = "studer-version" }
+liquibase = { id = "org.liquibase.gradle", version = "3.0.2" }
+tasktree = { id = "com.dorongold.task-tree", version = "2.1.1" }
 
 # SPRING ---
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
