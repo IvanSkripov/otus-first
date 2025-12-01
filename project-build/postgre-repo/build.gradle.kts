@@ -47,7 +47,9 @@ liquibase {
 //                "url" to "jdbc:postgresql://localhost:5432/testDb",
 //                "username" to "test",
 //                "password" to "test",
+
                 "logLevel" to "debug" //если хотим видить логи при выполнение команд
+
             )
         }
         runList = "main"
@@ -56,27 +58,27 @@ liquibase {
 
 val jooqVersion = "3.19.8"
 
-//val postgres: PostgreSQLContainer<Nothing> by postgresDelegate
+val postgresDelegate = lazy {
+    PostgreSQLContainer<Nothing>(
+        DockerImageName.parse("postgres:15.4").asCompatibleSubstituteFor("postgres")
+    ).also { it.start() }
+}
 
-//tasks.named<org.flywaydb.gradle.task.FlywayMigrateTask>("flywayMigrate") {
-//    doFirst {
-//        url = postgres.jdbcUrl
-//        user = postgres.username
-//        password = postgres.password
-//        defaultSchema = "good_food"
-//        locations = arrayOf("filesystem:../src/main/resources/db/migration")
-//    }
-//    finalizedBy("stopPostgreSQLContainer")
-//}
+val postgres: PostgreSQLContainer<Nothing> by postgresDelegate
 
-//// Uncomment to watch activity arguments
-//// use --debug in gradle properites
-//tasks.named<org.liquibase.gradle.LiquibaseTask>("validate") {
-//    doFirst {
-//        println ("LiquibaseTask ========== ${liquibase.activities.get("main").arguments}")
-//    }
-//}
 
+
+// use --debug in gradle properites
+tasks.named<org.liquibase.gradle.LiquibaseTask>("update") {
+    onlyIf { project.findProperty("jooq.enabled") == "true" }
+    doFirst {
+        val args = liquibase.activities.get("main").arguments as HashMap<String, String>
+        args.put("url", postgres.jdbcUrl)
+        args.put("user", postgres.jdbcUrl)
+        args.put("password", postgres.jdbcUrl)
+        println ("LiquibaseTask ========== ${liquibase.activities.get("main").arguments}")
+    }
+}
 
 
 // Конфиг jOOQ.
@@ -97,7 +99,7 @@ jooq {
                     database.apply {
                         name = "org.jooq.meta.postgres.PostgresDatabase"
                         schemata.add(
-                            org.jooq.meta.jaxb.SchemaMappingType().withInputSchema("good_food")
+                            org.jooq.meta.jaxb.SchemaMappingType().withInputSchema("")
                         )
                     }
                     strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"
@@ -121,8 +123,7 @@ jooq {
 tasks.named<nu.studer.gradle.jooq.JooqGenerate>("generateJooq") {
     onlyIf { project.findProperty("jooq.enabled") == "true" }
 
-    //dependsOn(tasks.named("flywayMigrate"))
-    //dependsOn(tasks.named("li"))
+    dependsOn(tasks.named("update"))
 
     val jooq = this
 
@@ -132,89 +133,27 @@ tasks.named<nu.studer.gradle.jooq.JooqGenerate>("generateJooq") {
         field?.let {
             field.isAccessible = true
             val configuration = field.get(jooq) as org.jooq.meta.jaxb.Configuration
-//            configuration.jdbc.url = postgres.jdbcUrl
-//            configuration.jdbc.user = postgres.username
-//            configuration.jdbc.password = postgres.password
+            configuration.jdbc.url = postgres.jdbcUrl
+            configuration.jdbc.user = postgres.username
+            configuration.jdbc.password = postgres.password
         }
     }
 
     finalizedBy("stopPostgreSQLContainer")
 }
 
-// Task Start Container
-tasks.register("startPostgreSQLContainer") {
-//    val postgresDelegate = lazy {
-//        PostgreSQLContainer<Nothing>(
-//            DockerImageName.parse("postgres:15.4").asCompatibleSubstituteFor("postgres")
-//        ).also { it.start() }
-//    }
-
-
-
-    doFirst {
-        println("startPostgreSQLContainer ----- ")
-    }
-
-//    doLast {
-//        postgres.stop()
-//        postgres.close()
-//    }
-
-}
-
 
 // Task Stop Container
 tasks.register("stopPostgreSQLContainer") {
-    doFirst {
-        println("stopPostgreSQLContainer ----- ")
+
+    onlyIf {
+        postgresDelegate.isInitialized()
     }
-
-//    onlyIf {
-//        postgresDelegate.isInitialized()
-//    }
-//    doLast {
-//        postgres.stop()
-//        postgres.close()
-//    }
+    doLast {
+        postgres.stop()
+        postgres.close()
+    }
 }
-
-
-
-//// Задачи
-//val startPostgres = tasks.register("startPostgres", StartPostgres::class.java)
-//
-//val liquibaseMigrate = tasks.register("liquibaseMigrate", LiquibaseMigrate::class.java) {
-//    dependsOn(startPostgres)
-//    changelogFile = liquibaseChangelogFile
-//}
-
-
-//
-//tasks.named("generateJooq").configure {
-//    dependsOn(liquibaseMigrate)
-//    finalizedBy("stopPostgres")
-//
-//    doFirst {
-//        // Подставим параметры подключения контейнера в конфигурацию jOOQ
-//        val extra = project.extensions.extraProperties
-//        val url = extra.get("pg_jdbc_url") as String
-//        val user = extra.get("pg_username") as String
-//        val pass = extra.get("pg_password") as String
-//
-//        project.logger.lifecycle("Configuring jOOQ to read from: $url")
-//
-//        jooq.configurations["main"]!!.jooqConfiguration.apply {
-//            jdbc = Jdbc()
-//                .withDriver("org.postgresql.Driver")
-//                .withUrl(url)
-//                .withUser(user)
-//                .withPassword(pass)
-//        }
-//    }
-//}
-//
-
-
 
 // Чтобы IDE видела сгенерированный код
 //sourceSets {
@@ -222,7 +161,6 @@ tasks.register("stopPostgreSQLContainer") {
 //        java.srcDir(jooqTargetDir)
 //    }
 //}
-
 
 
 //tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
