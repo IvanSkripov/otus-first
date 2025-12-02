@@ -1,9 +1,9 @@
 package ru.otus.kotlin.course.common.repo
 
 interface IImageRepo  {
-    abstract suspend fun createImage(image: DBImageRequest): IDBResult
+    abstract suspend fun createImage(req: DBImageRequest): IDBResult
     abstract suspend fun readImage(id: DBImageId): IDBResult
-    abstract suspend fun updateImage(image: DBImageRequest): IDBResult
+    abstract suspend fun updateImage(req: DBImageRequest): IDBResult
     abstract suspend fun deleteImage(id: DBImageId): IDBResult
     abstract suspend fun searchImages(criteria: DBImageSearchFilter): IDBResult
 

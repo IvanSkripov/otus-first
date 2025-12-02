@@ -29,6 +29,7 @@ buildscript {
 dependencies {
 
     implementation(kotlin("stdlib"))
+    implementation(libs.uuid)
     // jooq
     jooqGenerator(libs.postgresql)
     // liquibase
@@ -38,6 +39,14 @@ dependencies {
     // postgre
     implementation(libs.postgresql)
     implementation("org.testcontainers:testcontainers:2.0.2")
+
+    implementation(projects.contextCommon)
+    implementation(projects.contextStubs)
+
+    testImplementation(kotlin("test"))
+    testImplementation(libs.test.coroutines)
+    testImplementation ("org.testcontainers:testcontainers-postgresql:2.0.2")
+
 }
 
 liquibase {
@@ -85,6 +94,8 @@ tasks.named<org.liquibase.gradle.LiquibaseTask>("update") {
 
 // Конфиг jOOQ.
 // Мы будем переопределять подключение динамически в задаче generateJooq
+val jooqTargetDir = "${layout.projectDirectory.dir("./src/main/kotlin")}"
+
 jooq {
     version.set(jooqVersion)
     edition.set(nu.studer.gradle.jooq.JooqEdition.OSS)
@@ -120,7 +131,7 @@ jooq {
                     target.apply {
                         packageName = "ru.otus.kotlin.course.repo.postgre"
                         //directory = "${layout.buildDirectory.get()}/generated-sources/jooq"
-                        directory = "${layout.projectDirectory.dir("./src/db")}/jooq"
+                        directory = jooqTargetDir
                         encoding = "UTF-8"
                     }
                 }
@@ -169,11 +180,11 @@ tasks.register("stopPostgreSQLContainer") {
 }
 
 // Чтобы IDE видела сгенерированный код
-//sourceSets {
-//    val main by getting {
-//        java.srcDir(jooqTargetDir)
-//    }
-//}
+sourceSets {
+    val main by getting {
+        java.srcDir(jooqTargetDir)
+    }
+}
 
 
 //tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
