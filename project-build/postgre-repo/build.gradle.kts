@@ -118,7 +118,7 @@ jooq {
                         isKotlinNotNullPojoAttributes = true
                     }
                     target.apply {
-                        packageName = "package ru.otus.kotlin.course.repo.postgre"
+                        packageName = "ru.otus.kotlin.course.repo.postgre"
                         //directory = "${layout.buildDirectory.get()}/generated-sources/jooq"
                         directory = "${layout.projectDirectory.dir("./src/db")}/jooq"
                         encoding = "UTF-8"
