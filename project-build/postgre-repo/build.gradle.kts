@@ -45,7 +45,8 @@ liquibase {
         register("main") {
             this.arguments = mapOf(
                 "changelogFile" to
-                        "${layout.projectDirectory.dir("./src/db")}/data-set-v0.yml",
+                        "/project-build/postgre-repo/src/db/data-set-v0.yml",
+                        //"${layout.projectDirectory.dir("./src/db")}/data-set-v0.yml",
                 "url" to "jdbc:postgresql://localhost:5432/postgres",
                 "username" to "postgres",
                 "password" to "mysecretpassword",
@@ -112,6 +113,7 @@ jooq {
                     }
                     target.apply {
                         packageName = "dev.test.jooq.goodfood"
+                        //directory = "${layout.buildDirectory.get()}/generated-sources/jooq"
                         directory = "${layout.buildDirectory.get()}/generated-sources/jooq"
                         encoding = "UTF-8"
                     }
