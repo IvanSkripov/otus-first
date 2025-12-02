@@ -34,7 +34,7 @@
     3. [Архитектурные схемы](docs/03-architecture/03-arch.md)
 4. DevOps
     1. [Файлы сборки](./deploy)
-    2. [Заметки](docs/04-devops/01-notes.md) 
+    2. [Заметки](docs/04-devops/01-notes.md.txt) 
 
 # Структура проекта
 

@@ -101,8 +101,14 @@ jooq {
                     database.apply {
                         name = "org.jooq.meta.postgres.PostgresDatabase"
                         schemata.add(
-                            org.jooq.meta.jaxb.SchemaMappingType().withInputSchema("")
+                            org.jooq.meta.jaxb.SchemaMappingType().withInputSchema("public")
                         )
+                        excludes = """
+                            databasechangelog.*|
+                            flyway_schema_history|
+                            pg_.*|
+                            information_schema\..*
+                        """.trimIndent()
                     }
                     strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"
                     generate.apply {
@@ -112,9 +118,9 @@ jooq {
                         isKotlinNotNullPojoAttributes = true
                     }
                     target.apply {
-                        packageName = "dev.test.jooq.goodfood"
+                        packageName = "package ru.otus.kotlin.course.repo.postgre"
                         //directory = "${layout.buildDirectory.get()}/generated-sources/jooq"
-                        directory = "${layout.buildDirectory.get()}/generated-sources/jooq"
+                        directory = "${layout.projectDirectory.dir("./src/db")}/jooq"
                         encoding = "UTF-8"
                     }
                 }
