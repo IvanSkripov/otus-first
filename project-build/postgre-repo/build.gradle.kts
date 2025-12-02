@@ -22,6 +22,7 @@ buildscript {
     dependencies {
         classpath("org.liquibase:liquibase-core:4.31.1")
         classpath("org.testcontainers:postgresql:1.18.1")
+        classpath("org.testcontainers:testcontainers:2.0.2")
     }
 }
 
@@ -36,6 +37,7 @@ dependencies {
     liquibaseRuntime(libs.postgresql)
     // postgre
     implementation(libs.postgresql)
+    implementation("org.testcontainers:testcontainers:2.0.2")
 }
 
 liquibase {
@@ -44,10 +46,9 @@ liquibase {
             this.arguments = mapOf(
                 "changelogFile" to
                         "${layout.projectDirectory.dir("./src/db")}/data-set-v0.yml",
-//                "url" to "jdbc:postgresql://localhost:5432/testDb",
-//                "username" to "test",
-//                "password" to "test",
-
+                "url" to "jdbc:postgresql://localhost:5432/postgres",
+                "username" to "postgres",
+                "password" to "mysecretpassword",
                 "logLevel" to "debug" //если хотим видить логи при выполнение команд
 
             )
@@ -73,9 +74,9 @@ tasks.named<org.liquibase.gradle.LiquibaseTask>("update") {
     onlyIf { project.findProperty("jooq.enabled") == "true" }
     doFirst {
         val args = liquibase.activities.get("main").arguments as HashMap<String, String>
-        args.put("url", postgres.jdbcUrl)
-        args.put("user", postgres.jdbcUrl)
-        args.put("password", postgres.jdbcUrl)
+//        args.put("url", postgres.jdbcUrl)
+//        args.put("user", postgres.jdbcUrl)
+//        args.put("password", postgres.jdbcUrl)
         println ("LiquibaseTask ========== ${liquibase.activities.get("main").arguments}")
     }
 }
@@ -133,9 +134,13 @@ tasks.named<nu.studer.gradle.jooq.JooqGenerate>("generateJooq") {
         field?.let {
             field.isAccessible = true
             val configuration = field.get(jooq) as org.jooq.meta.jaxb.Configuration
-            configuration.jdbc.url = postgres.jdbcUrl
-            configuration.jdbc.user = postgres.username
-            configuration.jdbc.password = postgres.password
+//            configuration.jdbc.url = postgres.jdbcUrl
+//            configuration.jdbc.user = postgres.username
+//            configuration.jdbc.password = postgres.password
+//
+            configuration.jdbc.url = ""
+            configuration.jdbc.user = "postgres"
+            configuration.jdbc.password = "mysecretpassword"
         }
     }
 

@@ -1,35 +1,127 @@
 databaseChangeLog:
 
   - changeSet:
-      id: otus-first-v1
+      id: 1
       author: iskripov
       changes:
+        # 1) Таблица изображений
         - createTable:
             tableName: images
             remarks: Изображения
             columns:
               - column:
                   name: id
-                  type: string
+                  type: varchar(100)
                   constraints:
                     primaryKey: true
                     primaryKeyName: article_pk
                     nullable: false
               - column:
                   name: title
-                  type: varchar(1024)
+                  type: varchar(254)
                   constraints:
                     nullable: true
               - column:
                   name: description
-                  type: varchar(1000)
+                  type: text
                   constraints:
                     nullable: true
               - column:
-                  name: url
+                  name: uploadUrl
                   type: varchar(1024)
-                  remarks: Постоянная ссылка на изображение
+                  remarks: Ссылка на изображение при загрузке
+              - column:
+                  name: imageUrl
+                  type: varchar(1024)
+                  remarks: Ссылка на изображение
+              - column:
+                  name: previewUrl
+                  type: varchar(1024)
+                  remarks: Ссылка на preview
+              - column:
+                  name: permanentLinkUrl
+                  type: varchar(1024)
+                  remarks: Ссылка на постоянную локацию изображения
+
+        # 2) Таблица тегов
+        - createTable:
+            tableName: tags
+            columns:
+              - column:
+                  name: id
+                  type: bigint
                   constraints:
-                    unique: true
-                    uniqueConstraintName: article_url_uq
-                    nullable: true
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: value
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image_id
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: tags
+            columnNames: value
+            constraintName: uq_tags_value
+
+        # 3) Таблица меток (справочник ключей меток)
+        - createTable:
+            tableName: labels
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: key
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+        - addUniqueConstraint:
+            tableName: labels
+            columnNames: key
+            constraintName: uq_labels_key
+
+        # 4) Таблица значений меток
+        - createTable:
+            tableName: label_values
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: label_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image_id
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+        # Индексы для ускорения связей и поиска
+
+        - createIndex:
+            tableName: images
+            indexName: ix_images_title
+            columns:
+              - column:
+                  name: title
