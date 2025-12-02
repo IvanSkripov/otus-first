@@ -16,9 +16,9 @@
 
   - запуск докер контейнер с Postgre и контроль работы. Ссылка на docker image - https://hub.docker.com/_/postgres
 ```
-        - docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432:5432 postgres:15.4
-        -  docker exec -it some-postgres bash
-        -  sudo ss -tln
+     docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432:5432 postgres:15.4
+     docker exec -it some-postgres bash
+     sudo ss -tln
 ```
   - Клиент для Postgre
     -`sudo apt install postgresql-client`

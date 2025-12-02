@@ -140,7 +140,7 @@ tasks.named<nu.studer.gradle.jooq.JooqGenerate>("generateJooq") {
 //            configuration.jdbc.user = postgres.username
 //            configuration.jdbc.password = postgres.password
 //
-            configuration.jdbc.url = ""
+            configuration.jdbc.url = "jdbc:postgresql://localhost:5432/postgres"
             configuration.jdbc.user = "postgres"
             configuration.jdbc.password = "mysecretpassword"
         }
