@@ -14,7 +14,7 @@ databaseChangeLog:
                   type: varchar(100)
                   constraints:
                     primaryKey: true
-                    primaryKeyName: article_pk
+                    primaryKeyName: image_pk
                     nullable: false
               - column:
                   name: title
@@ -49,7 +49,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: bigint
+                  type: varchar(128)
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -63,10 +63,6 @@ databaseChangeLog:
                   type: varchar(100)
                   constraints:
                     nullable: false
-        - addAutoIncrement:
-            columnDataType: bigint
-            columnName: id
-            tableName: tags
 
         # 3) Таблица меток (справочник ключей меток)
         - createTable:
@@ -103,8 +99,14 @@ databaseChangeLog:
               - column:
                   name: value
                   type: varchar(255)
-                  constraints:
-                    nullable: false
+
+        - addUniqueConstraint:
+            tableName: label_values
+            columnNames: label_key, image_id
+            constraintName: uk_label_value
+            deferrable: true
+            initiallyDeferred: true
+            validate: true
 
         # Индексы для ускорения связей и поиска
         - createIndex:

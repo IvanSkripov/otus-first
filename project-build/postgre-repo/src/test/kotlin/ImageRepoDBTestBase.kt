@@ -40,8 +40,9 @@ class ImageRepoDBTestBase() {
             val res = repo.readImage(DBImageId(getDefaultId()))
             assertIs<DBGetImage>(res)
             val obj = res.image
-            assertEquals<PsImage>(PsImageStubsItems.FULL_TO_PSIMAGE, obj)
             println("${obj}")
+            assertEquals<PsImage>(PsImageStubsItems.FULL_TO_PSIMAGE, obj)
+
         }
     }
 

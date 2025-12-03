@@ -94,7 +94,8 @@ tasks.named<org.liquibase.gradle.LiquibaseTask>("update") {
 
 // Конфиг jOOQ.
 // Мы будем переопределять подключение динамически в задаче generateJooq
-val jooqTargetDir = "${layout.projectDirectory.dir("./src/main/kotlin")}"
+//val jooqTargetDir = "${layout.projectDirectory.dir("./src/main/kotlin")}"
+val jooqTargetDir = "${layout.buildDirectory.get()}/generated-sources/jooq"
 
 jooq {
     version.set(jooqVersion)
@@ -130,7 +131,6 @@ jooq {
                     }
                     target.apply {
                         packageName = "ru.otus.kotlin.course.repo.postgre"
-                        //directory = "${layout.buildDirectory.get()}/generated-sources/jooq"
                         directory = jooqTargetDir
                         encoding = "UTF-8"
                     }
