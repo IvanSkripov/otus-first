@@ -63,25 +63,20 @@ databaseChangeLog:
                   type: varchar(100)
                   constraints:
                     nullable: false
-        - addUniqueConstraint:
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
             tableName: tags
-            columnNames: value
-            constraintName: uq_tags_value
 
         # 3) Таблица меток (справочник ключей меток)
         - createTable:
             tableName: labels
             columns:
               - column:
-                  name: id
-                  type: bigint
+                  name: key
+                  type: varchar(32)
                   constraints:
                     primaryKey: true
-                    nullable: false
-              - column:
-                  name: key
-                  type: varchar(128)
-                  constraints:
                     nullable: false
               - column:
                   name: description
@@ -96,14 +91,8 @@ databaseChangeLog:
             tableName: label_values
             columns:
               - column:
-                  name: id
-                  type: bigint
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: label_id
-                  type: bigint
+                  name: label_key
+                  type: varchar(32)
                   constraints:
                     nullable: false
               - column:
@@ -118,10 +107,33 @@ databaseChangeLog:
                     nullable: false
 
         # Индексы для ускорения связей и поиска
-
         - createIndex:
             tableName: images
             indexName: ix_images_title
             columns:
               - column:
                   name: title
+
+  - changeSet:
+      id: 2
+      author: iskripov
+      changes:
+        changes:
+          - insert:
+              tableName: labels
+              columns:
+                - column:
+                    name: key
+                    value: author
+                - column:
+                    name: description
+                    value: Автор
+          - insert:
+              tableName: labels
+              columns:
+                - column:
+                    name: key
+                    value: format
+                - column:
+                    name: description
+                    value: Формат изображения

@@ -85,8 +85,8 @@ tasks.named<org.liquibase.gradle.LiquibaseTask>("update") {
     doFirst {
         val args = liquibase.activities.get("main").arguments as HashMap<String, String>
 //        args.put("url", postgres.jdbcUrl)
-//        args.put("user", postgres.jdbcUrl)
-//        args.put("password", postgres.jdbcUrl)
+//        args.put("user", postgres.username)
+//        args.put("password", postgres.password)
         println ("LiquibaseTask ========== ${liquibase.activities.get("main").arguments}")
     }
 }

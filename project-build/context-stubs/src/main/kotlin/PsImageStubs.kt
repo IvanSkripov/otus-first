@@ -15,8 +15,8 @@ private val PERM_LINK = "www.google.com"
 private val TAGS = mutableListOf("good", "nice")
 private val ERORS = listOf(ResponseErrorValue("1", "4", "2", "3"))
 private val ERORS_PS = mutableListOf(PsError("1", "2", "3", "4"))
-private val LABELS = listOf(Label("1", "2", "3"))
-private val LABELS_PS = mutableListOf(PsLabel("1", "2", "3"))
+private val LABELS = listOf(Label("author", "Автор", "Александр Михайлович Родченко"))
+private val LABELS_PS = mutableListOf(PsLabel("author", "Автор", "Александр Михайлович Родченко"))
 private val BYTES = byteArrayOf(0x30, 0x31, 0x32)
 
 

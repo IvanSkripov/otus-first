@@ -1,23 +1,25 @@
 package ru.otus.kotlin.course.common.stubs.repo.postgre.test
 
+import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
-import org.junit.After
-import org.junit.Before
+import org.junit.Test
 import org.testcontainers.postgresql.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
+import repo.SQLParams
 import ru.otus.kotlin.course.common.models.PsImage
 import ru.otus.kotlin.course.common.repo.*
 import ru.otus.kotlin.course.common.stubs.PsImageStubsItems
 import ru.otus.kotlin.course.common.stubs.getDefaultId
 import ru.otus.kotlin.course.common.stubs.repo.postgre.ImageRepoDB
-import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlin.time.Duration.Companion.minutes
 
 
-class ImageRepoDBTest {
+class ImageRepoDBTestBase() {
 
     private fun initRepo (repo: ImageRepoDB, objects: List<PsImage>)
         = RepoInitializer(repo, objects )
@@ -28,32 +30,19 @@ class ImageRepoDBTest {
         }
     }
 
-    val postgresDelegate = lazy {
-        PostgreSQLContainer(
-            DockerImageName.parse("postgres:9.6.12").asCompatibleSubstituteFor("postgres")
-        ).also { it.start() }
-    }
-
-    val postgres: PostgreSQLContainer by postgresDelegate
-
-
-
-    @After
-    fun tearDown() {
-        postgres.stop()
-    }
+    val params = SQLParams(host = "localhost")
 
     @Test
     fun readImageTest () {
-        println("postgres.jdbcUrl = ${postgres.jdbcUrl}")
-        //val repo = ImageRepoDB( randomId = { getDefaultId() } )
-        //initRepo(repo, listOf(PsImageStubsItems.FULL_TO_PSIMAGE))
-//        runRepoTest {
-//            val res = repo.readImage(DBImageId(getDefaultId()))
-//            assertIs<DBGetImage>(res)
-//            val obj = res.image
-//            assertEquals<PsImage>(PsImageStubsItems.FULL_TO_PSIMAGE, obj)
-//        }
+        val repo = ImageRepoDB( params = params,  randomId = { getDefaultId() } )
+        initRepo(repo, listOf(PsImageStubsItems.FULL_TO_PSIMAGE))
+        runRepoTest {
+            val res = repo.readImage(DBImageId(getDefaultId()))
+            assertIs<DBGetImage>(res)
+            val obj = res.image
+            assertEquals<PsImage>(PsImageStubsItems.FULL_TO_PSIMAGE, obj)
+            println("${obj}")
+        }
     }
 
 //    @Test
