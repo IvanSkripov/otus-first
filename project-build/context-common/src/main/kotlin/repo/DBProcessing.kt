@@ -55,3 +55,9 @@ fun errorNotFound (id: String)  = DBError(
     field = "id",
     msg = "Object with ID: ${id} is not Found",
 )
+
+fun errorSearchCriteria (criteria: String)  = DBError(
+    code = "$ERROR_GROUP_REPO-already-exist",
+    field = "",
+    msg = "Wrong search Criteria: [${criteria}]",
+)
