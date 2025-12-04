@@ -25,9 +25,9 @@ suspend inline fun PsSettings.controllerHelper(
         ctx.getRequest()
         logger.info("Request $logId started", mapOf("BeContext" to ctx))
 
-        // TODO: Установить нужные репозитории
         ctx.imageRepo = when(ctx.workMode) {
             PsWorkMode.TEST -> corSettings.repoTest
+            PsWorkMode.PROD -> corSettings.repoProd
             else -> IImageRepo.NONE
         }
         processor.exec(ctx)

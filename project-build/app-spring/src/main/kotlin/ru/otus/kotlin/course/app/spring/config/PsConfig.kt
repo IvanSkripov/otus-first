@@ -1,17 +1,21 @@
 package ru.otus.kotlin.course.app.spring.config
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import repo.SQLParams
 import ru.otus.kotlin.course.app.spring.base.PsSettings
 import ru.otus.kotlin.course.app.spring.base.PsWsRepo
 import ru.otus.kotlin.course.app.spring.biz.PsProcessor
 import ru.otus.kotlin.course.common.PsCoreSettings
 import ru.otus.kotlin.course.common.logger.PsLoggerProvider
 import ru.otus.kotlin.course.common.stubs.repo.ImageRepoInMemory
+import ru.otus.kotlin.course.common.stubs.repo.postgre.ImageRepoDB
 import ru.otus.kotlin.course.common.worker.IPsProcessor
 
+@EnableConfigurationProperties(SpringSQLParams::class)
 @Configuration
-class PsConfig {
+class PsConfig (val postgresConfig: SpringSQLParams) {
 
     @Bean
     fun processor(): IPsProcessor = PsProcessor()
@@ -21,10 +25,13 @@ class PsConfig {
     fun corSettings(): PsCoreSettings = PsCoreSettings(
         loggerProvider(),
         wsRepo(),
-        repoTest = repoTest()
+        repoTest = repoTest(),
+        repoProd = repoProd()
     )
     @Bean
     fun repoTest() = ImageRepoInMemory()
+    @Bean
+    fun repoProd() = ImageRepoDB(postgresConfig.asSQLParam())
     @Bean
     fun appSettings(corSettings: PsCoreSettings, processor: IPsProcessor) = PsSettings(corSettings, processor)
     @Bean

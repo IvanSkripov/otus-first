@@ -22,14 +22,13 @@ class PsProcessor() : IPsProcessor, Klogging {
             else -> {
                 when (ctx.workMode) {
                     PsWorkMode.STUB -> execStub(ctx)
-                    PsWorkMode.TEST -> execTest(ctx)
                     else -> execLogic(ctx)
                 }
             }
         }
     }
 
-    private suspend fun execStub(ctx: PsBeContext) {
+    private fun execStub(ctx: PsBeContext) {
         require(ctx.stubCase != PsStubs.NONE)
 
         when (ctx.stubCase) {
@@ -49,7 +48,7 @@ class PsProcessor() : IPsProcessor, Klogging {
     private val PREVIEW_URL = "www.otus-first.ru/preview/"
     private val IMAGE_URL = "www.otus-first.ru/image/"
 
-    private suspend fun execTest(ctx: PsBeContext) {
+    private suspend fun execLogic(ctx: PsBeContext) {
         ctx.state = PsState.RUNNING
         when(ctx.command) {
             PsCommand.CREATE -> {
@@ -59,11 +58,11 @@ class PsProcessor() : IPsProcessor, Klogging {
                 resultUpdateContext(ctx, res)
             }
             PsCommand.READ -> {
-                val res = ctx.imageRepo.readImage(ctx.request.id.toDB())
+                val res = ctx.imageRepo.readImage(ctx.request.id.toDB() )
                 resultUpdateContext(ctx, res)
             }
             PsCommand.DOWNLOAD -> {
-                val res = ctx.imageRepo.readImage(ctx.request.id.toDB())
+                val res = ctx.imageRepo.readImage(ctx.request.id.toDB(), true)
                 resultUpdateContext(ctx, res)
             }
             PsCommand.LINK -> {
@@ -83,13 +82,14 @@ class PsProcessor() : IPsProcessor, Klogging {
                 val res = ctx.imageRepo.updateImage(DBImageRequest(ctx.request))
                 resultUpdateContext(ctx, res)
             }
+            PsCommand.SEARCH -> {
+                val res = ctx.imageRepo.searchImages(DBImageSearchFilter(ctx.filterString))
+                resultUpdateContext(ctx, res)
+            }
             else -> TODO("Not implemented")
         }
     }
 
-    private suspend fun execLogic(ctx: PsBeContext) {
-       TODO("Implement PROD LOGIC")
-    }
 
     private fun resultUpdateContext(ctx: PsBeContext, res: IDBResult) {
         when (res) {

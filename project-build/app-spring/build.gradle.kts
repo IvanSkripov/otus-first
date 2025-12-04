@@ -26,6 +26,7 @@ dependencies {
 	implementation(projects.contextCommon)
 	implementation(projects.contextStubs)
 	implementation(projects.contextMappers)
+	implementation(projects.postgreRepo)
 
 	// Tests
 	testImplementation(kotlin("test"))

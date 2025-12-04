@@ -37,7 +37,7 @@ class ImageRepoSeverDBTest() {
         val repo = ImageRepoDB( params = params,  randomId = { getDefaultId() } )
         initRepo(repo, listOf(PsImageStubsItems.FULL_TO_PSIMAGE))
         runRepoTest {
-            val res = repo.readImage(DBImageId(getDefaultId()))
+            val res = repo.readImage(DBImageId(getDefaultId()), false)
             assertIs<DBGetImage>(res)
             val obj = res.image
             assertEquals<PsImage>(PsImageStubsItems.FULL_TO_PSIMAGE, obj)
@@ -52,7 +52,7 @@ class ImageRepoSeverDBTest() {
         runRepoTest {
             val image = PsImageStubsItems.FULL_TO_PSIMAGE.copy(imageUrl = "www.kremlin.ru")
             repo.updateImage(DBImageRequest( image),)
-            val res = repo.readImage(DBImageId(getDefaultId()))
+            val res = repo.readImage(DBImageId(getDefaultId()), false)
             assertIs<DBGetImage>(res)
             val obj = res.image
             assertEquals<PsImage>(image, obj)
@@ -73,7 +73,7 @@ class ImageRepoSeverDBTest() {
         runRepoTest {
             val cr = repo.createImage(DBImageRequest( PsImageStubsItems.FULL_TO_PSIMAGE))
             assertIs<DBGetImage>(cr)
-            val res = repo.readImage(DBImageId(cr.image.id.asString()))
+            val res = repo.readImage(DBImageId(cr.image.id.asString()), false)
             assertIs<DBGetImage>(res)
             val obj = res.image
             val image = PsImageStubsItems.FULL_TO_PSIMAGE.copy(id = cr.image.id )
@@ -95,7 +95,7 @@ class ImageRepoSeverDBTest() {
             assertIs<DBError>(deleteRes)
             assertEquals(errorNotFound(getDefaultId()), deleteRes)
             // try read - fail
-            val readRes = repo.readImage(DBImageId(getDefaultId()))
+            val readRes = repo.readImage(DBImageId(getDefaultId()), false)
             assertIs<DBError>(readRes)
             assertEquals(errorNotFound(getDefaultId()), readRes)
         }
@@ -104,7 +104,7 @@ class ImageRepoSeverDBTest() {
     @Test
     fun searchImagesTest() {
         val repo = ImageRepoDB(params = params, randomId = { getDefaultId() })
-        val image1 = PsImageStubsItems.FULL_TO_PSIMAGE.copy(title = "CriteriaA")
+        val image1 = PsImageStubsItems.FULL_TO_PSIMAGE.copy(title = "CriteriaA", id = PsImageId("1234"))
         val image2 = PsImageStubsItems.FULL_TO_PSIMAGE.copy(title = "CriteriaB")
         initRepo(repo, listOf(image1, image2 ))
         runRepoTest {
@@ -121,7 +121,7 @@ class ImageRepoSeverDBTest() {
 
             val resNone = repo.searchImages(DBImageSearchFilter("NOT_FOUND"))
             assertIs<DBGetImages>(resNone)
-            assertTrue(resOne.images.size == 0)
+            assertTrue(resNone.images.size == 0)
         }
     }
 }

@@ -40,7 +40,7 @@ class ImageRepoInMemory (
         DBGetImage(ret)
     }
 
-    override suspend fun readImage(id: DBImageId): IDBResult = tryRun  {
+    override suspend fun readImage(id: DBImageId, withData: Boolean): IDBResult = tryRun  {
         val key = id.takeIf { !it.isEmpty() }?.asString() ?: return@tryRun errorEmptyId
         mutex.withLock {
             cache.get(key)
@@ -82,8 +82,16 @@ class ImageRepoInMemory (
         }
     }
 
-    override suspend fun searchImages(criteria: DBImageSearchFilter): IDBResult {
-        TODO("Not yet implemented")
+    override suspend fun searchImages(criteria: DBImageSearchFilter): IDBResult = tryRun {
+        val list = mutableListOf<PsImage>()
+        mutex.withLock {
+            val keys = cache.asMap().filterValues {
+                it.title.contains(criteria.asString())
+            }.map { (key, value) ->
+                list.add(value.toModel())
+            }
+        }
+        DBGetImages(list)
     }
 
 }

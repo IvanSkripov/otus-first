@@ -94,8 +94,8 @@ tasks.named<org.liquibase.gradle.LiquibaseTask>("update") {
 
 // Конфиг jOOQ.
 // Мы будем переопределять подключение динамически в задаче generateJooq
-//val jooqTargetDir = "${layout.projectDirectory.dir("./src/main/kotlin")}"
-val jooqTargetDir = "${layout.buildDirectory.get()}/generated-sources/jooq"
+val jooqTargetDir = "${layout.projectDirectory.dir("./src/main/kotlin/jooq")}"
+//val jooqTargetDir = "${layout.buildDirectory.get()}/generated-sources/jooq"
 
 jooq {
     version.set(jooqVersion)
@@ -180,35 +180,8 @@ tasks.register("stopPostgreSQLContainer") {
 }
 
 // Чтобы IDE видела сгенерированный код
-sourceSets {
-    val main by getting {
-        java.srcDir(jooqTargetDir)
-    }
-}
-
-
-//tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-//    kotlinOptions.jvmTarget = "17"
-//}
-
-//java {
-//    toolchain {
-//        languageVersion.set(JavaLanguageVersion.of(17))
-//    }
-//}
-
-//tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-//    dependsOn("generateJooq")
-//}
-
-//tasks {
-//    compileKotlin {
-//        dependsOn(jooqCodegen)
-//    }
-//}
-
 configure<SourceSetContainer> {
     named("main") {
-        java.srcDir("${layout.buildDirectory.get()}/generated-sources/jooq")
+        java.srcDir(jooqTargetDir)
     }
 }

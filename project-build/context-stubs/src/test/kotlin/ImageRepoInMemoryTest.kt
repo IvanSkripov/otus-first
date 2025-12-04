@@ -5,9 +5,10 @@ import ru.otus.kotlin.course.common.stubs.repo.ImageRepoInMemory
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
+import org.junit.jupiter.api.Assertions.assertTrue
+import ru.otus.kotlin.course.common.models.PsImageId
 import ru.otus.kotlin.course.common.repo.*
 import ru.otus.kotlin.course.common.stubs.PsImageStubsItems
-import ru.otus.kotlin.course.common.stubs.repo.ImageEntity
 import kotlin.time.Duration.Companion.minutes
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -30,7 +31,7 @@ class ImageRepoInMemoryTest {
         val repo = ImageRepoInMemory( randomId = { getDefaultId() } )
         initRepo(repo, listOf(PsImageStubsItems.FULL_TO_PSIMAGE))
         runRepoTest {
-            val res = repo.readImage(DBImageId(getDefaultId()))
+            val res = repo.readImage(DBImageId(getDefaultId()), false)
             assertIs<DBGetImage>(res)
             val obj = res.image
             assertEquals<PsImage>(PsImageStubsItems.FULL_TO_PSIMAGE, obj)
@@ -44,7 +45,7 @@ class ImageRepoInMemoryTest {
         runRepoTest {
             val image = PsImageStubsItems.FULL_TO_PSIMAGE.copy(imageUrl = "www.kremlin.ru")
             repo.updateImage(DBImageRequest( image),)
-            val res = repo.readImage(DBImageId(getDefaultId()))
+            val res = repo.readImage(DBImageId(getDefaultId()), false)
             assertIs<DBGetImage>(res)
             val obj = res.image
             assertEquals<PsImage>(image, obj)
@@ -58,7 +59,7 @@ class ImageRepoInMemoryTest {
         runRepoTest {
             val cr = repo.createImage(DBImageRequest( PsImageStubsItems.FULL_TO_PSIMAGE))
             assertIs<DBGetImage>(cr)
-            val res = repo.readImage(DBImageId(cr.image.id.asString()))
+            val res = repo.readImage(DBImageId(cr.image.id.asString()), false)
             assertIs<DBGetImage>(res)
             val obj = res.image
             val image = PsImageStubsItems.FULL_TO_PSIMAGE.copy(id = cr.image.id )
@@ -75,9 +76,33 @@ class ImageRepoInMemoryTest {
             assertIs<DBGetImage>(res)
             val obj = res.image
             assertEquals<PsImage>(PsImageStubsItems.FULL_TO_PSIMAGE, obj)
-            val notRes = repo.readImage(DBImageId(getDefaultId()))
+            val notRes = repo.readImage(DBImageId(getDefaultId()), false)
             assertIs<DBError>(notRes)
             assertEquals(errorNotFound(getDefaultId()), notRes)
+        }
+    }
+
+    @Test
+    fun searchImagesTest() {
+        val repo = ImageRepoInMemory( randomId = { getDefaultId() } )
+        val image1 = PsImageStubsItems.FULL_TO_PSIMAGE.copy(title = "CriteriaA", id = PsImageId("321"))
+        val image2 = PsImageStubsItems.FULL_TO_PSIMAGE.copy(title = "CriteriaB")
+        initRepo(repo, listOf(image1, image2 ))
+        runRepoTest {
+            val resTwo = repo.searchImages(DBImageSearchFilter("Criteria"))
+            assertIs<DBGetImages>(resTwo)
+            assertTrue(resTwo.images.size == 2)
+            assertEquals<PsImage>(image1, resTwo.images[0])
+            assertEquals<PsImage>(image2, resTwo.images[1])
+
+            val resOne = repo.searchImages(DBImageSearchFilter("CriteriaA"))
+            assertIs<DBGetImages>(resOne)
+            assertTrue(resOne.images.size == 1)
+            assertEquals<PsImage>(image1, resOne.images[0])
+
+            val resNone = repo.searchImages(DBImageSearchFilter("NOT_FOUND"))
+            assertIs<DBGetImages>(resNone)
+            assertTrue(resNone.images.size == 0)
         }
     }
 

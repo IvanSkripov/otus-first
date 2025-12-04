@@ -3,8 +3,8 @@ import ru.otus.kotlin.course.common.models.PsImageId
 import ru.otus.kotlin.course.common.models.PsLabel
 import ru.otus.kotlin.course.repo.postgre.tables.pojos.Images
 
-fun Images.toPsImage(tags: MutableList<String>, labels: MutableList<PsLabel>): PsImage {
-    return PsImage(
+fun Images.toPsImage(tags: MutableList<String>, labels: MutableList<PsLabel>, data: ByteArray): PsImage {
+    val image =  PsImage(
         PsImageId(this.id),
         title = title ?: "",
         desc = description ?: "",
@@ -15,4 +15,6 @@ fun Images.toPsImage(tags: MutableList<String>, labels: MutableList<PsLabel>): P
         tags = tags.takeIf { it.size > 0 } ?: mutableListOf(),
         labels = labels.takeIf { it.size > 0 } ?: mutableListOf()
     )
+    image.file = data
+    return image
 }

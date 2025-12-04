@@ -364,7 +364,7 @@ fun stubDownloadFailedToTransport(): Pair<PsBeContext, ImageDownloadErrorRespons
 fun stubUpdateFromTransport(): Pair<ImageUpdateRequest, PsBeContext> {
     return Pair(
         ImageUpdateRequest(
-            debug = PsImageStubsItems.DBG_WRONG,
+            debug = PsImageStubsItems.STUB_WRONG,
             image = PsImageStubsItems.FULL_FROM_IMAGE
         ),
 
@@ -380,7 +380,7 @@ fun stubUpdateFromTransport(): Pair<ImageUpdateRequest, PsBeContext> {
 fun stubReadFromTransport(): Pair<ImageReadRequest, PsBeContext> {
     return Pair(
         ImageReadRequest(
-            debug = PsImageStubsItems.DBG_WRONG,
+            debug = PsImageStubsItems.STUB_WRONG,
             imageId = IMAGE_ID
         ),
         PsBeContext(
@@ -395,7 +395,7 @@ fun stubReadFromTransport(): Pair<ImageReadRequest, PsBeContext> {
 fun stubDeleteFromTransport(): Pair<ImageDeleteRequest, PsBeContext> {
     return Pair(
         ImageDeleteRequest(
-            debug = PsImageStubsItems.DBG_WRONG,
+            debug = PsImageStubsItems.STUB_WRONG,
             imageId = IMAGE_ID
         ),
         PsBeContext(
@@ -410,7 +410,7 @@ fun stubDeleteFromTransport(): Pair<ImageDeleteRequest, PsBeContext> {
 fun stubLinkFromTransport(): Pair<ImageLinkRequest, PsBeContext> {
     return Pair(
         ImageLinkRequest(
-            debug = PsImageStubsItems.DBG_WRONG,
+            debug = PsImageStubsItems.STUB_WRONG,
             imageId = IMAGE_ID
         ),
         PsBeContext(
@@ -425,7 +425,7 @@ fun stubLinkFromTransport(): Pair<ImageLinkRequest, PsBeContext> {
 fun stubDownloadFromTransport(): Pair<ImageDownloadRequest, PsBeContext> {
     return Pair(
         ImageDownloadRequest(
-            debug = PsImageStubsItems.DBG_WRONG,
+            debug = PsImageStubsItems.STUB_WRONG,
             imageId = IMAGE_ID
         ),
         PsBeContext(
@@ -440,7 +440,7 @@ fun stubDownloadFromTransport(): Pair<ImageDownloadRequest, PsBeContext> {
 fun stubSearchFromTransport(): Pair<ImageSearchRequest, PsBeContext> {
     return Pair(
         ImageSearchRequest(
-            debug = PsImageStubsItems.DBG_OK,
+            debug = PsImageStubsItems.STUB_OK,
             search = ImageSearchObject(SEARCH_STRING)
         ),
         PsBeContext(
@@ -457,7 +457,7 @@ fun stubSearchFromTransport(): Pair<ImageSearchRequest, PsBeContext> {
 fun  stubRead(flag: Boolean = true) = Pair<ImageReadRequest, ImageReadResponse> (
     ImageReadRequest(
         requestType = "read",
-        debug = PsImageStubsItems.DBG_OK,
+        debug = PsImageStubsItems.STUB_OK,
         imageId = IMAGE_ID
     ), ImageReadResponse (
         responseType = if (flag) "read" else null,
@@ -468,7 +468,7 @@ fun  stubRead(flag: Boolean = true) = Pair<ImageReadRequest, ImageReadResponse> 
 
 fun  stubUpdate(flag: Boolean = true) = Pair<ImageUpdateRequest, ImageUpdateResponse> (
     ImageUpdateRequest(
-        debug = PsImageStubsItems.DBG_OK,
+        debug = PsImageStubsItems.STUB_OK,
         image = PsImageStubsItems.FULL_FROM_IMAGE
     ), ImageUpdateResponse (
         responseType = if (flag) "update" else null,
@@ -479,7 +479,7 @@ fun  stubUpdate(flag: Boolean = true) = Pair<ImageUpdateRequest, ImageUpdateResp
 
 fun  stubDelete(flag: Boolean = true) = Pair<ImageDeleteRequest, ImageDeleteResponse> (
     ImageDeleteRequest(
-        debug = PsImageStubsItems.DBG_OK,
+        debug = PsImageStubsItems.STUB_OK,
         imageId = IMAGE_ID
     ), ImageDeleteResponse (
         responseType = if (flag) "delete" else null,
@@ -490,7 +490,7 @@ fun  stubDelete(flag: Boolean = true) = Pair<ImageDeleteRequest, ImageDeleteResp
 
 fun  stubLink(flag: Boolean = true) = Pair<ImageLinkRequest, ImageLinkResponse> (
     ImageLinkRequest(
-        debug = PsImageStubsItems.DBG_OK,
+        debug = PsImageStubsItems.STUB_OK,
         imageId = IMAGE_ID
     ), ImageLinkResponse (
         responseType = if (flag) "link" else null,
@@ -501,7 +501,7 @@ fun  stubLink(flag: Boolean = true) = Pair<ImageLinkRequest, ImageLinkResponse> 
 
 fun  stubSearch(flag: Boolean = true) = Pair<ImageSearchRequest, ImageSearchResponse> (
     ImageSearchRequest(
-        debug = PsImageStubsItems.DBG_OK,
+        debug = PsImageStubsItems.STUB_OK,
         search = ImageSearchObject(SEARCH_STRING)
     ), ImageSearchResponse (
         responseType = if (flag) "search" else null,
@@ -512,14 +512,14 @@ fun  stubSearch(flag: Boolean = true) = Pair<ImageSearchRequest, ImageSearchResp
 
 fun  stubDownload() = Pair<ImageDownloadRequest, ByteArray> (
     ImageDownloadRequest(
-        debug = PsImageStubsItems.DBG_OK,
+        debug = PsImageStubsItems.STUB_OK,
         imageId = IMAGE_ID
     ), BYTES
 )
 
 fun  stubCreate(flag: Boolean = true) = Pair<ImageCreateRequest, ImageCreateResponse> (
     ImageCreateRequest(
-        debug = PsImageStubsItems.DBG_OK,
+        debug = PsImageStubsItems.STUB_OK,
         image = ImageCreateObject(
             title = IMAGE_TITLE,
             source = ImageSourceObject( sourceValue = ImageSourceFile(
@@ -554,11 +554,11 @@ fun stubReadErrors(stubError: DebugItem.Stub, error: ResponseErrorValue, flag: B
 // ==== STUB Helpers ===============
 
 object PsImageStubsItems {
-    val DBG_WRONG = DebugItem (
+    val STUB_WRONG = DebugItem (
         mode = DebugItem.Mode.STUB,
         stub = DebugItem.Stub.WRONG_LINK)
 
-    val DBG_OK = DebugItem (
+    val STUB_OK = DebugItem (
         mode = DebugItem.Mode.STUB,
         stub = DebugItem.Stub.SUCCESS)
 

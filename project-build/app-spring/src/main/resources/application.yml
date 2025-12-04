@@ -29,3 +29,11 @@ springdoc:
 logging:
   level:
     root: INFO
+
+psql:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: mysecretpassword
+  database: postgres
+  schema: public

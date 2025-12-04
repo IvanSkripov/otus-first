@@ -5,16 +5,21 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.context.annotation.Import
 import ru.otus.kotlin.course.api.v1.CreateRequest
 import ru.otus.kotlin.course.api.v1.apiCreateRequestToBytes
 import ru.otus.kotlin.course.api.v1.models.*
 import ru.otus.kotlin.course.app.spring.AppWsBase
+import ru.otus.kotlin.course.app.spring.config.PsConfig
+import ru.otus.kotlin.course.app.spring.controllers.PsContollerWS
+import ru.otus.kotlin.course.app.spring.controllers.PsController
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import(PsController::class, PsConfig::class, PsContollerWS::class)
 class AppSpringRepoTest: AppWsBase() {
 
     @LocalServerPort
@@ -24,14 +29,27 @@ class AppSpringRepoTest: AppWsBase() {
     val CREATE_TITILE = "New Loaded File"
     val UPDATE_TITILE = "Updated Title"
     val DBG_TEST =  DebugItem(mode = DebugItem.Mode.TEST)
+    val DBG_PROD =  DebugItem(mode = DebugItem.Mode.PROD)
     val BYTES = byteArrayOf(0x31, 0x32, 0x33)
     val TAGS = listOf("New", "Home")
     val LABELS = buildList<Label> {
         add(Label("author", "Автор", "Энни Лейбовиц"))
         add(Label("format", "Формат изображения", "PSD"))
     }
+    var DEBUG_MODE = DBG_TEST
 
     @Test
+    fun imageProcessTestMode() {
+        DEBUG_MODE = DBG_TEST
+        imageProcessTest()
+    }
+
+    @Test
+    fun imageProcessProdMode() {
+        DEBUG_MODE = DBG_PROD
+        imageProcessTest()
+    }
+
     fun imageProcessTest() {
         val cr = getCreateReq(CREATE_TITILE)
         val data = apiCreateRequestToBytes(CreateRequest(cr, BYTES))
@@ -47,6 +65,13 @@ class AppSpringRepoTest: AppWsBase() {
         sendAndReceive <ImageReadRequest, IResponse> (rr) { pl ->
             val res = checkResultResponse<ImageReadResponse>(pl)
             assertEquals(CREATE_TITILE, res.image?.title )
+        }
+
+        val ssOld = getSearchReq("Loaded")
+        sendAndReceive <ImageSearchRequest, IResponse> (ssOld) { pl ->
+            val res = checkResultResponse<ImageSearchResponse>(pl)
+            assertEquals(1 , res.list?.size)
+            assertEquals(CREATE_TITILE, res.list?.get(0)?.title )
         }
 
         val dr = getDownloadReq(imageId)
@@ -78,6 +103,13 @@ class AppSpringRepoTest: AppWsBase() {
             assertEquals(res.image?.title, UPDATE_TITILE)
             assertThat(res.image?.labels).isEqualTo(LABELS)
             assertThat(res.image?.tags).isEqualTo(TAGS)
+        }
+
+        val ssNew = getSearchReq("Updated")
+        sendAndReceive <ImageSearchRequest, IResponse> (ssNew) { pl ->
+            val res = checkResultResponse<ImageSearchResponse>(pl)
+            assertEquals(res.list?.size , 1)
+            assertEquals(UPDATE_TITILE, res.list?.get(0)?.title )
         }
 
         val del = getDeleteReq(imageId)
@@ -123,7 +155,7 @@ class AppSpringRepoTest: AppWsBase() {
     }
 
     private fun getCreateReq(title: String) = ImageCreateRequest (
-        debug = DBG_TEST,
+        debug = DEBUG_MODE,
         image = ImageCreateObject(
             title = title,
             source = ImageSourceObject( sourceValue = ImageSourceFile(
@@ -134,12 +166,12 @@ class AppSpringRepoTest: AppWsBase() {
     )
 
     private fun getReadReq(imageId: String) = ImageReadRequest (
-        debug = DBG_TEST,
+        debug = DEBUG_MODE,
         imageId = imageId
     )
 
     private fun getUpdateReq(imageId: String, image: Image) = ImageUpdateRequest (
-        debug = DBG_TEST,
+        debug = DEBUG_MODE,
         image = ImageItem(
             imageId = image.imageId,
             title = UPDATE_TITILE,
@@ -150,17 +182,22 @@ class AppSpringRepoTest: AppWsBase() {
     )
 
     private fun getDownloadReq(imageId: String) = ImageDownloadRequest (
-        debug = DBG_TEST,
+        debug = DEBUG_MODE,
         imageId = imageId
     )
 
     private fun getLinkReq(imageId: String) = ImageLinkRequest (
-        debug = DBG_TEST,
+        debug = DEBUG_MODE,
         imageId = imageId
     )
 
     private fun getDeleteReq(imageId: String) = ImageDeleteRequest (
-        debug = DBG_TEST,
+        debug = DEBUG_MODE,
         imageId = imageId
+    )
+
+    private fun getSearchReq(search: String)  = ImageSearchRequest (
+        debug = DEBUG_MODE,
+        search = ImageSearchObject(searchCreateria = search)
     )
 }

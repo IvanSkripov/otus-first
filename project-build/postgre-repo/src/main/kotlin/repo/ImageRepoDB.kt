@@ -11,10 +11,9 @@ import ru.otus.kotlin.course.common.models.PsImageId
 import ru.otus.kotlin.course.common.models.PsLabel
 import ru.otus.kotlin.course.common.repo.*
 import ru.otus.kotlin.course.repo.postgre.tables.pojos.Images
-import ru.otus.kotlin.course.repo.postgre.tables.references.IMAGES
-import ru.otus.kotlin.course.repo.postgre.tables.references.LABELS
-import ru.otus.kotlin.course.repo.postgre.tables.references.LABEL_VALUES
-import ru.otus.kotlin.course.repo.postgre.tables.references.TAGS
+import ru.otus.kotlin.course.repo.postgre.tables.references.*
+
+
 import toPsImage
 
 
@@ -45,18 +44,21 @@ class ImageRepoDB(
         context.transaction { cfg ->
             val ctx = DSL.using(cfg)
             upsertImage(ctx, ret)
+            ctx.insertInto(FILES, FILES.IMAGE_ID, FILES.DATA)
+                .values(key, req.image.file)
+                .execute()
         }
         DBGetImage(ret)
 
     }
 
-    override suspend fun readImage(id: DBImageId): IDBResult = tryRun {
+    override suspend fun readImage(id: DBImageId, withData: Boolean): IDBResult = tryRun {
         val key = id.takeIf { !it.isEmpty() }?.asString() ?: return@tryRun errorEmptyId
 
         var ret: IDBResult = errorNotFound(key)
         context.transaction { cfg ->
             val ctx = DSL.using(cfg)
-            val image = readImageFullEntity(ctx, key)
+            val image = readImageFullEntity(ctx, key, withData)
             image?.let {
                 ret = DBGetImage(image)
             }
@@ -90,7 +92,7 @@ class ImageRepoDB(
         var ret: IDBResult = errorNotFound(key)
         context.transaction { cfg ->
             val ctx = DSL.using(cfg)
-            val old = readImageFullEntity(ctx, key)
+            val old = readImageFullEntity(ctx, key, false)
 
             ctx.deleteFrom(IMAGES).where(IMAGES.ID.eq(key)).execute()
             ctx.deleteFrom(TAGS).where(TAGS.IMAGE_ID.eq(key)).execute()
@@ -110,11 +112,11 @@ class ImageRepoDB(
 
             val keys = ctx.select(IMAGES.ID)
                 .from(IMAGES)
-                .where(IMAGES.TITLE.like(criteria.asString()))
+                .where(IMAGES.TITLE.like("%${criteria.asString()}%"))
                 .fetch {r -> r[IMAGES.ID] }
 
             keys.forEach() { key ->
-                val image = readImageFullEntity(ctx, key)
+                val image = readImageFullEntity(ctx, key, false)
                 image?.let {  list.add(it) }
             }
         }
@@ -186,7 +188,7 @@ class ImageRepoDB(
         }
     }
 
-    private fun readImageFullEntity(ctx: DSLContext, key: String): PsImage? {
+    private fun readImageFullEntity(ctx: DSLContext, key: String, withData: Boolean): PsImage? {
         val image = ctx.selectFrom(IMAGES)
             .where(IMAGES.ID.eq(key))
             .fetchOneInto(Images::class.java)
@@ -211,18 +213,16 @@ class ImageRepoDB(
                 )
             }
 
+
+        val data = if (withData) {
+            ctx.select(FILES.DATA).where(FILES.IMAGE_ID.eq(key)).fetchOne(FILES.DATA) ?: ByteArray(0)
+        } else {
+            ByteArray(0)
+        }
+
+
         return image?.let {
-            image.toPsImage(tags, labels)
+            image.toPsImage(tags, labels, data)
         }
     }
 }
-
-//fun updateEntity(old: ImageEntity?, new: ImageEntity) {
-//    if (new.imageUrl.isEmpty()) { new.imageUrl = old?.imageUrl ?: "" }
-//    if (new.previewUrl.isEmpty()) { new.previewUrl = old?.previewUrl ?: "" }
-//    if (new.permanentLinkUrl.isEmpty()) { new.permanentLinkUrl = old?.permanentLinkUrl ?: "" }
-//
-//    if (new.bytes.size == 0) {
-//        new.bytes = old?.bytes?.copyOf() ?: ByteArray(0)
-//    }
-//}
