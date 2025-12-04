@@ -122,6 +122,10 @@ databaseChangeLog:
                   type: bytea
                   constraints:
                     nullable: true
+        - addUniqueConstraint:
+            tableName: files
+            columnNames: image_id
+            constraintName: uq_files_key
 
         # Индексы для ускорения связей и поиска
         - createIndex:

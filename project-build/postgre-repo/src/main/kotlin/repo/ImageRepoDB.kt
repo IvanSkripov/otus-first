@@ -97,6 +97,7 @@ class ImageRepoDB(
             ctx.deleteFrom(IMAGES).where(IMAGES.ID.eq(key)).execute()
             ctx.deleteFrom(TAGS).where(TAGS.IMAGE_ID.eq(key)).execute()
             ctx.deleteFrom(LABEL_VALUES).where(LABEL_VALUES.IMAGE_ID.eq(key)).execute()
+            ctx.deleteFrom(FILES).where(FILES.IMAGE_ID.eq(key)).execute()
 
             old?.let {
                 ret = DBGetImage(old)
@@ -215,7 +216,7 @@ class ImageRepoDB(
 
 
         val data = if (withData) {
-            ctx.select(FILES.DATA).where(FILES.IMAGE_ID.eq(key)).fetchOne(FILES.DATA) ?: ByteArray(0)
+            ctx.select(FILES.DATA).from(FILES).where(FILES.IMAGE_ID.eq(key)).fetchOne(FILES.DATA) ?: ByteArray(0)
         } else {
             ByteArray(0)
         }

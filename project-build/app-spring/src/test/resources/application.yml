@@ -1,0 +1,39 @@
+server:
+  port: 8080
+
+management:
+  endpoint:
+    env:
+      access: unrestricted
+  endpoints:
+    web:
+      exposure:
+        include: health, threaddump, beans, info, env
+
+spring:
+  jackson:
+    default-property-inclusion: non_null
+  application:
+    name: app-spring
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: true
+    use-root-path: true
+    urls:
+      - name: picture-server
+        url: open-api-postfull-images.yaml
+
+logging:
+  level:
+    root: INFO
+
+psql:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: mysecretpassword
+  database: postgres
+  schema: public

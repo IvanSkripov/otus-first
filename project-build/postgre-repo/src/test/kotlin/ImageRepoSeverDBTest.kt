@@ -71,13 +71,17 @@ class ImageRepoSeverDBTest() {
         val repo = ImageRepoDB( params = params,  randomId = { getDefaultId() } )
         initRepo(repo, emptyList())
         runRepoTest {
-            val cr = repo.createImage(DBImageRequest( PsImageStubsItems.FULL_TO_PSIMAGE))
+            val img = PsImageStubsItems.FULL_TO_PSIMAGE.copy()
+            val BYTES = byteArrayOf (0x30, 0x31, 0x32)
+            img.file = BYTES
+            val cr = repo.createImage(DBImageRequest(img))
             assertIs<DBGetImage>(cr)
-            val res = repo.readImage(DBImageId(cr.image.id.asString()), false)
+            val res = repo.readImage(DBImageId(cr.image.id.asString()), true)
             assertIs<DBGetImage>(res)
             val obj = res.image
             val image = PsImageStubsItems.FULL_TO_PSIMAGE.copy(id = cr.image.id )
             assertEquals<PsImage>(image, obj)
+            assertTrue(obj.file.contentEquals(BYTES))
         }
     }
 
