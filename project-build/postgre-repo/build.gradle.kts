@@ -40,12 +40,15 @@ dependencies {
     implementation(libs.postgresql)
     implementation("org.testcontainers:testcontainers:2.0.2")
 
+
+
     implementation(projects.contextCommon)
     implementation(projects.contextStubs)
 
     testImplementation(kotlin("test"))
     testImplementation(libs.test.coroutines)
     testImplementation ("org.testcontainers:testcontainers-postgresql:2.0.2")
+    testImplementation(libs.liquibase)
 
 }
 
