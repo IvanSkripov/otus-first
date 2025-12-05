@@ -4,13 +4,6 @@ import org.testcontainers.utility.DockerImageName
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
-//import kotlin.reflect.full.memberProperties
-//import kotlin.reflect.jvm.isAccessible
-//import org.jooq.meta.jaxb.Configuration as JooqConfiguration
-//import org.gradle.api.tasks.Input
-//import org.gradle.api.tasks.TaskAction
-//import org.jooq.meta.jaxb.*
-
 plugins {
     id("build-jvm")
     //alias(libs.plugins.jooq.generator)

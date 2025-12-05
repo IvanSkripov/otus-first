@@ -24,17 +24,6 @@ import kotlin.time.Duration.Companion.minutes
 
 class ImageRepoSeverDBTest() {
 
-    private fun initRepo (repo: ImageRepoDB, objects: List<PsImage>)
-        = RepoInitializer(repo, objects )
-
-    private fun runRepoTest(testRun: suspend TestScope.() -> Unit) = runTest(timeout = 2.minutes) {
-        withContext(Dispatchers.Default) {
-            testRun()
-        }
-    }
-
-
-
     @Test
     fun executeTests () {
         val params = SQLParams(host = "localhost")
