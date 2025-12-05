@@ -175,6 +175,17 @@ tasks.register("stopPostgreSQLContainer") {
     }
 }
 
+tasks.test {
+    testLogging {
+        showStandardStreams = true
+        events ("passed", "skipped", "failed", "standardOut", "standardError")
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+    }
+}
+
+
+
+
 // Чтобы IDE видела сгенерированный код
 configure<SourceSetContainer> {
     named("main") {

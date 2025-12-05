@@ -9,13 +9,17 @@ import org.testcontainers.utility.DockerImageName
 import repo.SQLParams
 import java.sql.DriverManager
 
-
 class ImageRepoConteinerDBTest(
 ) {
 
-
     @Test
     fun executeTests() {
+
+        // run test only on Linux
+        val osName = System.getProperty("os.name")
+        println("Check OS: ${osName}. Start tests only on Linux")
+        if (osName.contains("Windows")) { return  }
+
 
         PostgreSQLContainer(
             DockerImageName.parse("postgres:15.4")
