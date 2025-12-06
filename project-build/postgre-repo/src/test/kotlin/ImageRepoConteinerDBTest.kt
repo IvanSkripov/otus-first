@@ -64,18 +64,16 @@ class ImageRepoConteinerDBTest(
 
         val changelog = "/project-build/postgre-repo/src/db/data-set-v0.yml"
         println("Migration starting. ChangeLog: [${changelog}], params: [${params}]")
-        DriverManager.getConnection(params.url, params.user, params.password).use { conn ->
-            {
-                val database = liquibase.database.DatabaseFactory.getInstance()
-                    .findCorrectDatabaseImplementation(JdbcConnection(conn))
-                val resourceAccessor = ClassLoaderResourceAccessor(this::class.java.classLoader)
-                Liquibase(changelog, resourceAccessor, database).use { lb ->
-                    println("Before update")
-                    lb.update("")
-                    println("Migration finished")
-                }
-            }
-        }
+        val conn = DriverManager.getConnection(params.url, params.user, params.password)
+        val database = liquibase.database.DatabaseFactory.getInstance()
+            .findCorrectDatabaseImplementation(JdbcConnection(conn))
+        val resourceAccessor = ClassLoaderResourceAccessor(this::class.java.classLoader)
+        val lb = Liquibase(changelog, resourceAccessor, database)
+        println("Before update")
+        lb.update("")
+        println("Migration finished")
+
 
     }
+
 }

@@ -50,7 +50,7 @@ liquibase {
         register("main") {
             this.arguments = mapOf(
                 "changelogFile" to
-                        "/project-build/postgre-repo/src/db/data-set-v0.yml",
+                        "/project-build/postgre-repo/src/main/resources/db/data-set-v0.yml",
                         //"${layout.projectDirectory.dir("./src/db")}/data-set-v0.yml",
                 "url" to "jdbc:postgresql://localhost:5432/postgres",
                 "username" to "postgres",
