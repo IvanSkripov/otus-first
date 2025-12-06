@@ -20,11 +20,14 @@ class ImageRepoConteinerDBTest(
         println("Check OS: ${osName}. Start tests only on Linux")
         if (! osName.contains("Linux")) { return  }
 
-        println("Create Container")
-        PostgreSQLContainer(
+        println("Creating Container")
+        val pg = PostgreSQLContainer(
             DockerImageName.parse("postgres:15.4")
                 .asCompatibleSubstituteFor("postgres")
-        ).also { it.start() }.use { postgres ->
+        )
+        pg.start()
+        println("Created Container ${pg.isCreated}")
+        pg.use { postgres ->
             {
                 val params = SQLParams(
                     url = postgres.jdbcUrl,
