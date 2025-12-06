@@ -1,5 +1,8 @@
 package ru.otus.kotlin.course.app.spring.repo
 
+import liquibase.Liquibase
+import liquibase.database.jvm.JdbcConnection
+import liquibase.resource.ClassLoaderResourceAccessor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -12,6 +15,7 @@ import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
+import repo.SQLParams
 import ru.otus.kotlin.course.api.v1.CreateRequest
 import ru.otus.kotlin.course.api.v1.apiCreateRequestToBytes
 import ru.otus.kotlin.course.api.v1.models.*
@@ -20,6 +24,7 @@ import ru.otus.kotlin.course.app.spring.config.PsConfig
 import ru.otus.kotlin.course.app.spring.controllers.PsContollerWS
 import ru.otus.kotlin.course.app.spring.controllers.PsController
 import java.io.File
+import java.sql.DriverManager
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
@@ -221,6 +226,15 @@ class AppSpringRepoTest: AppWsBase() {
         @BeforeAll
         fun beforeAll() {
             pg.start()
+            val changelog = "db/data-set-v0.yml"
+            println("Migration starting. ChangeLog: [${changelog}]")
+            val conn = DriverManager.getConnection(pg.getJdbcUrl(), pg.getUsername(), pg.getPassword())
+            val database = liquibase.database.DatabaseFactory.getInstance()
+                .findCorrectDatabaseImplementation(JdbcConnection(conn))
+            val resourceAccessor = ClassLoaderResourceAccessor(this::class.java.classLoader)
+            val lb = Liquibase(changelog, resourceAccessor, database)
+            lb.update("")
+
         }
 
         @JvmStatic
@@ -236,8 +250,8 @@ class AppSpringRepoTest: AppWsBase() {
             registry.add("spring.datasource.username", pg::getUsername);
             registry.add("spring.datasource.password", pg::getPassword);
            }
-
-
         }
+
+
 
 }

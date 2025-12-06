@@ -12,6 +12,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertFalse
 
+
 class ImageRepoConteinerDBTest(
 ) {
 
@@ -78,7 +79,6 @@ class ImageRepoConteinerDBTest(
         println("Before update")
         lb.update("")
         println("Migration finished")
-
 
     }
 

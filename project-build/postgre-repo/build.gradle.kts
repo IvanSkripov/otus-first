@@ -37,7 +37,7 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation(libs.test.coroutines)
 
-    implementation(libs.test.containers.container.postgre)
+    testImplementation(libs.test.containers.container.postgre)
     testImplementation(libs.liquibase)
 
 }
