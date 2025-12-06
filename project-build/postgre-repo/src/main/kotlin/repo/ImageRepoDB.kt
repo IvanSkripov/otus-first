@@ -22,11 +22,12 @@ class ImageRepoDB(
     val randomId: () -> String = { uuid4().toString() },
 ) : ImageRepoBase(), IRepoInitializer {
 
-    private val context: DSLContext = DSL.using(
-        DriverManager.getConnection(params.url, params.user, params.password),
-        SQLDialect.POSTGRES
-    )
-
+    private val context: DSLContext by lazy {
+        DSL.using(
+            DriverManager.getConnection(params.url, params.user, params.password),
+            SQLDialect.POSTGRES
+        )
+    }
 
     override fun save(objects: Collection<PsImage>): Collection<PsImage> = objects.map {
         require(it.id != PsImageId.NONE)

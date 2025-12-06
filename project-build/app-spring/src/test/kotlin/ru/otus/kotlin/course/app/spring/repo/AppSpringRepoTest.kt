@@ -227,7 +227,7 @@ class AppSpringRepoTest: AppWsBase() {
         fun beforeAll() {
             pg.start()
             val changelog = "db/data-set-v0.yml"
-            println("Migration starting. ChangeLog: [${changelog}]")
+            println("Migration starting. ChangeLog: [${changelog}] on DB url: ${pg.getJdbcUrl()}, user: ${pg.getUsername()}, password: ${pg.getPassword()}")
             val conn = DriverManager.getConnection(pg.getJdbcUrl(), pg.getUsername(), pg.getPassword())
             val database = liquibase.database.DatabaseFactory.getInstance()
                 .findCorrectDatabaseImplementation(JdbcConnection(conn))
@@ -246,9 +246,9 @@ class AppSpringRepoTest: AppWsBase() {
         @JvmStatic
         @DynamicPropertySource
         public fun overrideProperties(registry: DynamicPropertyRegistry) {
-            registry.add("psql.datasource.url", pg::getJdbcUrl);
-            registry.add("spring.datasource.username", pg::getUsername);
-            registry.add("spring.datasource.password", pg::getPassword);
+            registry.add("psql.url", pg::getJdbcUrl);
+            registry.add("psql.user", pg::getUsername);
+            registry.add("psql.password", pg::getPassword);
            }
         }
 
