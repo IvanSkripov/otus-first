@@ -39,13 +39,19 @@ class ImageRepoConteinerDBTest(
             // run tests
             val runner: TestRunner = TestRunner(params)
 
+            println("Test: create")
             runner.createImageTest()
+            println("Test: read")
             runner.readImageTest()
+            println("Test: update")
             runner.updateImageTest()
+            println("Test: delete")
             runner.deleteImageTest()
+            println("Test: search")
             runner.searchImagesTest()
         } catch (e:Throwable) {
             println("Catch error e: ${e}")
+            println("StackTrace: ${e.printStackTrace()}")
         } finally {
             println("Stoped Container")
             pg.stop()
