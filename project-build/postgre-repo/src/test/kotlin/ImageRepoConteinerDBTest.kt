@@ -8,6 +8,8 @@ import org.testcontainers.postgresql.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
 import repo.SQLParams
 import java.sql.DriverManager
+import kotlin.test.assertEquals
+import kotlin.test.assertFails
 
 class ImageRepoConteinerDBTest(
 ) {
@@ -62,7 +64,9 @@ class ImageRepoConteinerDBTest(
 
     private fun runMigration(params: SQLParams) {
 
-        val changelog = "/project-build/postgre-repo/src/db/data-set-v0.yml"
+        //val changelog = "classpath:resources/db/data-set-v0.yml"
+        val changelog = "db/data-set-v0.yml"
+
         println("Migration starting. ChangeLog: [${changelog}], params: [${params}]")
         val conn = DriverManager.getConnection(params.url, params.user, params.password)
         val database = liquibase.database.DatabaseFactory.getInstance()
