@@ -1,5 +1,7 @@
 package ru.otus.kotlin.course.app.spring.config
 
+import io.klogging.Klogging
+import io.klogging.NoCoLogging
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 import repo.SQLParams
@@ -22,5 +24,8 @@ class SpringSQLParams (
         password = password,
         database = database,
         schema = schema
-    ).also { println("SpringSQLParams =============  ${it}")}
+    ).also { logger.debug("Loaded SQL Params",  mapOf("SQLParams" to it)) }
+    companion object: NoCoLogging {
+
+    }
 }

@@ -18,9 +18,9 @@ class ImageRepoConteinerDBTest(
         // run test only on Linux
         val osName = System.getProperty("os.name")
         println("Check OS: ${osName}. Start tests only on Linux")
-        if (osName.contains("Windows")) { return  }
+        if (! osName.contains("Linux")) { return  }
 
-
+        println("Create Container")
         PostgreSQLContainer(
             DockerImageName.parse("postgres:15.4")
                 .asCompatibleSubstituteFor("postgres")
@@ -32,7 +32,6 @@ class ImageRepoConteinerDBTest(
                     password = postgres.password
                 )
                 println("SQLParams = ${params}")
-
                 runMigration(params)
 
                 // run tests
@@ -52,16 +51,19 @@ class ImageRepoConteinerDBTest(
     private fun runMigration(params: SQLParams) {
 
         val changelog = "/project-build/postgre-repo/src/db/data-set-v0.yml"
-
+        println("Migration starting. ChangeLog: [${changelog}], params: [${params}]")
         DriverManager.getConnection(params.url, params.user, params.password).use { conn ->
             {
                 val database = liquibase.database.DatabaseFactory.getInstance()
                     .findCorrectDatabaseImplementation(JdbcConnection(conn))
                 val resourceAccessor = ClassLoaderResourceAccessor(this::class.java.classLoader)
                 Liquibase(changelog, resourceAccessor, database).use { lb ->
+                    println("Before update")
                     lb.update("")
+                    println("Migration finished")
                 }
             }
         }
+
     }
 }
