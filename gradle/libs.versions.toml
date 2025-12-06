@@ -48,6 +48,10 @@ liquibase = { module = "org.liquibase:liquibase-core", version = "4.27.0" }
 test-spring-boot = { module = "org.springframework.boot:spring-boot-starter-test" }
 test-spring-kafka = { module = "org.springframework.kafka:spring-kafka-test" }
 test-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+test-containers = { module = "org.testcontainers:testcontainers", version = "2.0.2"}
+test-containers-postgre = { module = "org.testcontainers:postgresql", version = "1.18.1" }
+test-containers-container-postgre = { module = "org.testcontainers:testcontainers-postgresql", version = "2.0.2" }
+# "org.testcontainers:testcontainers-postgresql:2.0.2"
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

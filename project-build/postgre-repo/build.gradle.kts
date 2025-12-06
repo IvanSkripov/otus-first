@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
 import kotlin.reflect.full.memberProperties
@@ -6,16 +5,15 @@ import kotlin.reflect.jvm.isAccessible
 
 plugins {
     id("build-jvm")
-    //alias(libs.plugins.jooq.generator)
     alias(libs.plugins.studer)
     alias(libs.plugins.liquibase)
 }
 
 buildscript {
     dependencies {
-        classpath("org.liquibase:liquibase-core:4.31.1")
-        classpath("org.testcontainers:postgresql:1.18.1")
-        classpath("org.testcontainers:testcontainers:2.0.2")
+        classpath(libs.liquibase)
+        classpath(libs.test.containers)
+        classpath(libs.test.containers.postgre)
     }
 }
 
@@ -31,16 +29,15 @@ dependencies {
     liquibaseRuntime(libs.postgresql)
     // postgre
     implementation(libs.postgresql)
-    implementation("org.testcontainers:testcontainers:2.0.2")
-
-
+    implementation(libs.test.containers)
 
     implementation(projects.contextCommon)
     implementation(projects.contextStubs)
 
     testImplementation(kotlin("test"))
     testImplementation(libs.test.coroutines)
-    testImplementation ("org.testcontainers:testcontainers-postgresql:2.0.2")
+
+    implementation(libs.test.containers.container.postgre)
     testImplementation(libs.liquibase)
 
 }

@@ -31,9 +31,7 @@ logging:
     root: INFO
 
 psql:
-  host: localhost
-  port: 5432
+  url: jdbc:postgresql://localhost:5432/postgres
   user: postgres
   password: mysecretpassword
-  database: postgres
   schema: public

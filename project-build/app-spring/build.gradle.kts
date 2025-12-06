@@ -32,6 +32,8 @@ dependencies {
 	testImplementation(kotlin("test"))
 	testImplementation(libs.test.spring.boot)
 	testImplementation(libs.test.spring.kafka)
+	testImplementation(libs.test.containers)
+	testImplementation(libs.test.containers.postgre)
 //	testImplementation("io.projectreactor:reactor-test")
 //	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 //	testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
