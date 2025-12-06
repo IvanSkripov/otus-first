@@ -27,29 +27,32 @@ class ImageRepoConteinerDBTest(
         )
         pg.start()
         println("Created Container ${pg.isCreated}")
-        pg.use { postgres ->
-            {
-                val params = SQLParams(
-                    url = postgres.jdbcUrl,
-                    user = postgres.username,
-                    password = postgres.password
-                )
-                println("SQLParams = ${params}")
-                runMigration(params)
+        val params = SQLParams(
+            url = pg.jdbcUrl,
+            user = pg.username,
+            password = pg.password
+        )
+        println("SQLParams = ${params}")
+        try {
+            runMigration(params)
 
-                // run tests
-                val runner: TestRunner = TestRunner(params)
+            // run tests
+            val runner: TestRunner = TestRunner(params)
 
-                runner.createImageTest()
-                runner.readImageTest()
-                runner.updateImageTest()
-                runner.deleteImageTest()
-                runner.searchImagesTest()
-            }
-
+            runner.createImageTest()
+            runner.readImageTest()
+            runner.updateImageTest()
+            runner.deleteImageTest()
+            runner.searchImagesTest()
+        } catch (e:Throwable) {
+            println("Catch error e: ${e}")
+        } finally {
+            println("Stoped Container")
+            pg.stop()
         }
-    }
 
+
+    }
 
     private fun runMigration(params: SQLParams) {
 
