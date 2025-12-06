@@ -3,9 +3,7 @@ package ru.otus.kotlin.course.app.spring.base
 import org.springframework.web.reactive.socket.WebSocketSession
 import reactor.core.publisher.Mono
 import ru.otus.kotlin.course.api.v1.apiResponseSerialize
-import ru.otus.kotlin.course.api.v1.models.IRequest
 import ru.otus.kotlin.course.api.v1.models.IResponse
-import ru.otus.kotlin.course.common.stubs.stubResponseError
 import ru.otus.kotlin.course.common.ws.IWsSession
 
 class PsWsSession (

@@ -18,6 +18,7 @@ dependencies {
 	implementation(libs.coroutines.reactor.extentions)
 	implementation(libs.kotlin.reflect)
 	implementation(libs.klogging)
+	implementation(libs.uuid)
 
  	// Subprojects
 
@@ -25,11 +26,15 @@ dependencies {
 	implementation(projects.contextCommon)
 	implementation(projects.contextStubs)
 	implementation(projects.contextMappers)
+	implementation(projects.postgreRepo)
 
 	// Tests
 	testImplementation(kotlin("test"))
 	testImplementation(libs.test.spring.boot)
 	testImplementation(libs.test.spring.kafka)
+	testImplementation(libs.test.containers)
+	testImplementation(libs.test.containers.postgre)
+	testImplementation(libs.liquibase)
 //	testImplementation("io.projectreactor:reactor-test")
 //	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 //	testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
@@ -59,6 +64,13 @@ tasks {
 
 tasks.test {
 	useJUnitPlatform()
+	if (project.findProperty("use.db.container") != "true") {
+		exclude("**/AppSpringProdModeRepoTest.class")
+	}
+	if (project.findProperty("use.db.server") != "true") {
+		exclude("**/AppSpringServerModeRepoTest.class")
+	}
+
 }
 
 //kotlin {

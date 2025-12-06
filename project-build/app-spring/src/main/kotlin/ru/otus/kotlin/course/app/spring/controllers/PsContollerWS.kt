@@ -1,7 +1,5 @@
 package ru.otus.kotlin.course.app.spring.controllers
 
-//import org.springframework.web.reactive.socket.WebSocketSession
-
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge

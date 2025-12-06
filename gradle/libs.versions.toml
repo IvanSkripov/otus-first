@@ -7,6 +7,8 @@ jackson = "2.18.3"
 # kotlin-spring-ver = "1.9.25"
 spring-boot = "3.5.6"
 coroutines = "1.9.0"
+postgre-version = "42.7.3"
+studer-version = "10.1.1"
 
 # BASE
 jvm-compiler = "17"
@@ -17,6 +19,7 @@ plugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.
 plugin-binaryCompatibilityValidator = "org.jetbrains.kotlinx:binary-compatibility-validator:0.13.2"
 jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 jackson-datatype = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
+uuid = { module = "com.benasher44:uuid", version = "0.8.4"}
 # kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.6.1" }
 
 # SPRING ---
@@ -36,16 +39,29 @@ kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 # KLOGGING ---
 klogging = { module = "io.klogging:klogging-jvm",  version = "0.10.1"}
 
+# DATABASES (POSTGRES)
+db-cache4k = "io.github.reactivecircus.cache4k:cache4k:0.13.0"
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgre-version" }
+liquibase = { module = "org.liquibase:liquibase-core", version = "4.31.1" }
+#liquibase = { module = "org.liquibase:liquibase-core", version = "4.27.0" }
 
 # TESTS
 test-spring-boot = { module = "org.springframework.boot:spring-boot-starter-test" }
 test-spring-kafka = { module = "org.springframework.kafka:spring-kafka-test" }
 test-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+test-containers = { module = "org.testcontainers:testcontainers", version = "2.0.2"}
+test-containers-postgre = { module = "org.testcontainers:postgresql", version = "1.18.1" }
+test-containers-container-postgre = { module = "org.testcontainers:testcontainers-postgresql", version = "2.0.2" }
+# "org.testcontainers:testcontainers-postgresql:2.0.2"
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 openapi-generator = { id = "org.openapi.generator", version.ref = "openapi-generator" }
+jooq-generator = { id = "org.jooq.jooq-codegen-gradle", version = "3.19.28" }
+studer = { id = "nu.studer.jooq", version.ref = "studer-version" }
+liquibase = { id = "org.liquibase.gradle", version = "3.0.2" }
+tasktree = { id = "com.dorongold.task-tree", version = "2.1.1" }
 
 # SPRING ---
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }

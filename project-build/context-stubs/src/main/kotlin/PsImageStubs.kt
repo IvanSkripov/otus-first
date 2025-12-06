@@ -3,9 +3,9 @@ package ru.otus.kotlin.course.common.stubs
 import ru.otus.kotlin.course.api.v1.models.*
 import ru.otus.kotlin.course.common.PsBeContext
 import ru.otus.kotlin.course.common.models.*
+import ru.otus.kotlin.course.common.repo.ERROR_GROUP_REPO
 import java.io.File
 import java.net.URI
-import java.net.URL
 
 private val IMAGE_ID = "123"
 private val IMAGE_TITLE = "Update Title"
@@ -15,8 +15,8 @@ private val PERM_LINK = "www.google.com"
 private val TAGS = mutableListOf("good", "nice")
 private val ERORS = listOf(ResponseErrorValue("1", "4", "2", "3"))
 private val ERORS_PS = mutableListOf(PsError("1", "2", "3", "4"))
-private val LABELS = listOf(Label("1", "2", "3"))
-private val LABELS_PS = mutableListOf(PsLabel("1", "2", "3"))
+private val LABELS = listOf(Label("author", "Автор", "Александр Михайлович Родченко"))
+private val LABELS_PS = mutableListOf(PsLabel("author", "Автор", "Александр Михайлович Родченко"))
 private val BYTES = byteArrayOf(0x30, 0x31, 0x32)
 
 
@@ -35,12 +35,15 @@ fun prepareCtx(ctx: PsBeContext, block: PsBeContext.() -> Unit): PsBeContext {
     return ctx
 }
 
-fun stubResponseError(stub: PsStubs ): PsBeContext {
-    return prepareCtx(PsBeContext()) {
-        state = PsState.FAILING
-        errors.add(PsError(code = stub.toString(), message = "Message ${stub.toString()}"))
-    }
-}
+// TODO : Удалить функцию
+//fun stubResponseError(stub: PsStubs ): PsBeContext {
+//    return prepareCtx(PsBeContext()) {
+//        state = PsState.FAILING
+//        errors.add(PsError(code = stub.toString(), message = "Message ${stub.toString()}"))
+//    }
+//}
+
+fun getDefaultId() = IMAGE_ID
 
 // ==== Stub Context  ===============
 
@@ -60,7 +63,31 @@ fun getStub(context: PsBeContext): PsImage = when(context.command) {
     else -> throw IllegalStateException("Wrong command")
 }
 
-fun getStabImages() = listOf(PsImageStubsItems.FULL_TO_PSIMAGE, PsImageStubsItems.FULL_TO_PSIMAGE)
+fun getStubError(context: PsBeContext) {
+    require(context.workMode == PsWorkMode.STUB)
+    require(context.stubCase != PsStubs.SUCCESS)
+    require(context.stubCase != PsStubs.NONE)
+
+
+//    #  Возможные ошибки
+//    #  * '101' - WrongOwner, Изображение НЕ принадлежит владельцу (id.owner == visitor)
+//    #  * '102' - WrongLink, Невеная ссылка для закачки изображения
+//    #  * '103' - WrongImageSize, Размер превышает 100 МБ
+//    #  * '104' - WrongImageFormat, Неверный формат загружаемого изображения
+
+    val err = when(context.stubCase) {
+        PsStubs.DB_ERROR -> PsImageStubsItems.DB_ERROR
+        PsStubs.WRONG_OWNER -> PsImageStubsItems.WRONG_OWNER
+        PsStubs.WRONG_LINK -> PsImageStubsItems.WRONG_LINK
+        PsStubs.WRONG_IMAGE_SIZE -> PsImageStubsItems.WRONG_IMAGE_SIZE
+        PsStubs.WRONG_IMAGE_FORMAT ->  PsImageStubsItems.WRONG_IMAGE_FORMAT
+        else -> TODO("Incorrect scenario")
+    }
+    context.errors.add(err)
+    context.state = PsState.FAILING
+}
+
+fun getStubImages() = listOf(PsImageStubsItems.FULL_TO_PSIMAGE, PsImageStubsItems.FULL_TO_PSIMAGE)
 
 // ==== To Transport STUB ===============
 fun stubCreateToTransport(): Pair<PsBeContext, ImageCreateResponse> {
@@ -337,7 +364,7 @@ fun stubDownloadFailedToTransport(): Pair<PsBeContext, ImageDownloadErrorRespons
 fun stubUpdateFromTransport(): Pair<ImageUpdateRequest, PsBeContext> {
     return Pair(
         ImageUpdateRequest(
-            debug = PsImageStubsItems.DBG_WRONG,
+            debug = PsImageStubsItems.STUB_WRONG,
             image = PsImageStubsItems.FULL_FROM_IMAGE
         ),
 
@@ -353,7 +380,7 @@ fun stubUpdateFromTransport(): Pair<ImageUpdateRequest, PsBeContext> {
 fun stubReadFromTransport(): Pair<ImageReadRequest, PsBeContext> {
     return Pair(
         ImageReadRequest(
-            debug = PsImageStubsItems.DBG_WRONG,
+            debug = PsImageStubsItems.STUB_WRONG,
             imageId = IMAGE_ID
         ),
         PsBeContext(
@@ -368,7 +395,7 @@ fun stubReadFromTransport(): Pair<ImageReadRequest, PsBeContext> {
 fun stubDeleteFromTransport(): Pair<ImageDeleteRequest, PsBeContext> {
     return Pair(
         ImageDeleteRequest(
-            debug = PsImageStubsItems.DBG_WRONG,
+            debug = PsImageStubsItems.STUB_WRONG,
             imageId = IMAGE_ID
         ),
         PsBeContext(
@@ -383,7 +410,7 @@ fun stubDeleteFromTransport(): Pair<ImageDeleteRequest, PsBeContext> {
 fun stubLinkFromTransport(): Pair<ImageLinkRequest, PsBeContext> {
     return Pair(
         ImageLinkRequest(
-            debug = PsImageStubsItems.DBG_WRONG,
+            debug = PsImageStubsItems.STUB_WRONG,
             imageId = IMAGE_ID
         ),
         PsBeContext(
@@ -398,7 +425,7 @@ fun stubLinkFromTransport(): Pair<ImageLinkRequest, PsBeContext> {
 fun stubDownloadFromTransport(): Pair<ImageDownloadRequest, PsBeContext> {
     return Pair(
         ImageDownloadRequest(
-            debug = PsImageStubsItems.DBG_WRONG,
+            debug = PsImageStubsItems.STUB_WRONG,
             imageId = IMAGE_ID
         ),
         PsBeContext(
@@ -413,12 +440,12 @@ fun stubDownloadFromTransport(): Pair<ImageDownloadRequest, PsBeContext> {
 fun stubSearchFromTransport(): Pair<ImageSearchRequest, PsBeContext> {
     return Pair(
         ImageSearchRequest(
-            debug = PsImageStubsItems.DBG_OK,
+            debug = PsImageStubsItems.STUB_OK,
             search = ImageSearchObject(SEARCH_STRING)
         ),
         PsBeContext(
             command = PsCommand.SEARCH,
-            workMode = PsWorkMode.TEST,
+            workMode = PsWorkMode.STUB,
             stubCase = PsStubs.SUCCESS,
             filterString = SEARCH_STRING
         )
@@ -430,7 +457,7 @@ fun stubSearchFromTransport(): Pair<ImageSearchRequest, PsBeContext> {
 fun  stubRead(flag: Boolean = true) = Pair<ImageReadRequest, ImageReadResponse> (
     ImageReadRequest(
         requestType = "read",
-        debug = PsImageStubsItems.DBG_OK,
+        debug = PsImageStubsItems.STUB_OK,
         imageId = IMAGE_ID
     ), ImageReadResponse (
         responseType = if (flag) "read" else null,
@@ -441,7 +468,7 @@ fun  stubRead(flag: Boolean = true) = Pair<ImageReadRequest, ImageReadResponse> 
 
 fun  stubUpdate(flag: Boolean = true) = Pair<ImageUpdateRequest, ImageUpdateResponse> (
     ImageUpdateRequest(
-        debug = PsImageStubsItems.DBG_OK,
+        debug = PsImageStubsItems.STUB_OK,
         image = PsImageStubsItems.FULL_FROM_IMAGE
     ), ImageUpdateResponse (
         responseType = if (flag) "update" else null,
@@ -452,7 +479,7 @@ fun  stubUpdate(flag: Boolean = true) = Pair<ImageUpdateRequest, ImageUpdateResp
 
 fun  stubDelete(flag: Boolean = true) = Pair<ImageDeleteRequest, ImageDeleteResponse> (
     ImageDeleteRequest(
-        debug = PsImageStubsItems.DBG_OK,
+        debug = PsImageStubsItems.STUB_OK,
         imageId = IMAGE_ID
     ), ImageDeleteResponse (
         responseType = if (flag) "delete" else null,
@@ -463,7 +490,7 @@ fun  stubDelete(flag: Boolean = true) = Pair<ImageDeleteRequest, ImageDeleteResp
 
 fun  stubLink(flag: Boolean = true) = Pair<ImageLinkRequest, ImageLinkResponse> (
     ImageLinkRequest(
-        debug = PsImageStubsItems.DBG_OK,
+        debug = PsImageStubsItems.STUB_OK,
         imageId = IMAGE_ID
     ), ImageLinkResponse (
         responseType = if (flag) "link" else null,
@@ -474,7 +501,7 @@ fun  stubLink(flag: Boolean = true) = Pair<ImageLinkRequest, ImageLinkResponse> 
 
 fun  stubSearch(flag: Boolean = true) = Pair<ImageSearchRequest, ImageSearchResponse> (
     ImageSearchRequest(
-        debug = PsImageStubsItems.DBG_OK,
+        debug = PsImageStubsItems.STUB_OK,
         search = ImageSearchObject(SEARCH_STRING)
     ), ImageSearchResponse (
         responseType = if (flag) "search" else null,
@@ -485,14 +512,14 @@ fun  stubSearch(flag: Boolean = true) = Pair<ImageSearchRequest, ImageSearchResp
 
 fun  stubDownload() = Pair<ImageDownloadRequest, ByteArray> (
     ImageDownloadRequest(
-        debug = PsImageStubsItems.DBG_OK,
+        debug = PsImageStubsItems.STUB_OK,
         imageId = IMAGE_ID
     ), BYTES
 )
 
 fun  stubCreate(flag: Boolean = true) = Pair<ImageCreateRequest, ImageCreateResponse> (
     ImageCreateRequest(
-        debug = PsImageStubsItems.DBG_OK,
+        debug = PsImageStubsItems.STUB_OK,
         image = ImageCreateObject(
             title = IMAGE_TITLE,
             source = ImageSourceObject( sourceValue = ImageSourceFile(
@@ -508,15 +535,30 @@ fun  stubCreate(flag: Boolean = true) = Pair<ImageCreateRequest, ImageCreateResp
     )
 )
 
+fun stubReadErrors(stubError: DebugItem.Stub, error: ResponseErrorValue, flag: Boolean = true) = Pair<ImageReadRequest, ImageReadResponse> (
+    ImageReadRequest(
+        requestType = "read",
+        debug =  DebugItem (
+            mode = DebugItem.Mode.STUB,
+            stub = stubError
+        ),
+        imageId = IMAGE_ID
+    ), ImageReadResponse (
+        responseType = if (flag) "read" else null,
+        result = ResponseResult.ERROR,
+        errors = listOf(error)
+
+    )
+)
 
 // ==== STUB Helpers ===============
 
 object PsImageStubsItems {
-    val DBG_WRONG = DebugItem (
+    val STUB_WRONG = DebugItem (
         mode = DebugItem.Mode.STUB,
         stub = DebugItem.Stub.WRONG_LINK)
 
-    val DBG_OK = DebugItem (
+    val STUB_OK = DebugItem (
         mode = DebugItem.Mode.STUB,
         stub = DebugItem.Stub.SUCCESS)
 
@@ -554,6 +596,37 @@ object PsImageStubsItems {
         desc = IMAGE_DESC,
         tags = TAGS,
         labels = LABELS_PS
+    )
+
+    val DB_ERROR = PsError(
+        code = "$ERROR_GROUP_REPO-internal-error",
+        field = "*",
+        group = "repo",
+        message = "Internal DB error"
+    )
+
+    val WRONG_OWNER = PsError(
+        code = "WrongOwner",
+        group = "permissions",
+        message = "Image doesn't belong to the owner (id.owner == visitor)"
+    )
+
+    val WRONG_LINK = PsError(
+        code = "WrongLink",
+        group = "uploading",
+        message = "Wrong link for uploading image"
+    )
+
+    val WRONG_IMAGE_SIZE = PsError(
+        code = "WrongImageSize",
+        group = "uploading",
+        message = "Size of the image is more than 100M"
+    )
+
+    val WRONG_IMAGE_FORMAT = PsError(
+        code = "WrongImageFormat",
+        group = "uploading",
+        message = "Wrong format of the uploading image"
     )
 
     val SIMPLE_REQUEST = PsImage(id = PsImageId(IMAGE_ID))

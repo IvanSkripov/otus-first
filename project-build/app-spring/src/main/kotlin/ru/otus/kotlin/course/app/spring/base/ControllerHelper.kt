@@ -3,6 +3,9 @@ package ru.otus.kotlin.course.app.spring.base
 import ru.otus.kotlin.course.common.PsBeContext
 import ru.otus.kotlin.course.common.PsCoreSettings
 import ru.otus.kotlin.course.common.models.PsState
+import ru.otus.kotlin.course.common.models.PsWorkMode
+import ru.otus.kotlin.course.common.repo.IImageRepo
+import ru.otus.kotlin.course.common.stubs.repo.ImageRepoInMemory
 import ru.otus.kotlin.course.mappers.asError
 import kotlin.math.log
 import kotlin.reflect.KClass
@@ -21,6 +24,12 @@ suspend inline fun PsSettings.controllerHelper(
     return try {
         ctx.getRequest()
         logger.info("Request $logId started", mapOf("BeContext" to ctx))
+
+        ctx.imageRepo = when(ctx.workMode) {
+            PsWorkMode.TEST -> corSettings.repoTest
+            PsWorkMode.PROD -> corSettings.repoProd
+            else -> IImageRepo.NONE
+        }
         processor.exec(ctx)
         logger.info("Request $logId finished", mapOf("BeContext" to ctx))
         ctx
