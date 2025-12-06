@@ -86,10 +86,7 @@ tasks.named<org.liquibase.gradle.LiquibaseTask>("update") {
 
 
 // Конфиг jOOQ.
-// Мы будем переопределять подключение динамически в задаче generateJooq
 val jooqTargetDir = "${layout.projectDirectory.dir("./src/main/kotlin/jooq")}"
-//val jooqTargetDir = "${layout.buildDirectory.get()}/generated-sources/jooq"
-
 jooq {
     version.set(jooqVersion)
     edition.set(nu.studer.gradle.jooq.JooqEdition.OSS)

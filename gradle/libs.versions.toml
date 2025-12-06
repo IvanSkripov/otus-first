@@ -42,7 +42,8 @@ klogging = { module = "io.klogging:klogging-jvm",  version = "0.10.1"}
 # DATABASES (POSTGRES)
 db-cache4k = "io.github.reactivecircus.cache4k:cache4k:0.13.0"
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgre-version" }
-liquibase = { module = "org.liquibase:liquibase-core", version = "4.27.0" }
+liquibase = { module = "org.liquibase:liquibase-core", version = "4.31.1" }
+#liquibase = { module = "org.liquibase:liquibase-core", version = "4.27.0" }
 
 # TESTS
 test-spring-boot = { module = "org.springframework.boot:spring-boot-starter-test" }

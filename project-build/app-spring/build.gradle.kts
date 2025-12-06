@@ -64,6 +64,13 @@ tasks {
 
 tasks.test {
 	useJUnitPlatform()
+	if (project.findProperty("use.db.container") != "true") {
+		exclude("**/AppSpringProdModeRepoTest.class")
+	}
+	if (project.findProperty("use.db.server") != "true") {
+		exclude("**/AppSpringServerModeRepoTest.class")
+	}
+
 }
 
 //kotlin {
