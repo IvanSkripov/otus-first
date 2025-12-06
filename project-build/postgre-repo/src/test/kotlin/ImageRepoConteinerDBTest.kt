@@ -10,6 +10,7 @@ import repo.SQLParams
 import java.sql.DriverManager
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.assertFalse
 
 class ImageRepoConteinerDBTest(
 ) {
@@ -54,6 +55,7 @@ class ImageRepoConteinerDBTest(
         } catch (e:Throwable) {
             println("Catch error e: ${e}")
             println("StackTrace: ${e.printStackTrace()}")
+            assertFalse(true, "Tests Failed")
         } finally {
             println("Stoped Container")
             pg.stop()
