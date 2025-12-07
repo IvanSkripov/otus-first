@@ -8,7 +8,7 @@
 FROM bellsoft/liberica-openjre-alpine:23-cds AS layers
 WORKDIR /application
 #COPY --from=builder /application/target/*.jar app.jar
-COPY ../../project-build/app-spring/build/libs/app-spring-1.0-SNAPSHOT app.jar
+COPY project-build/app-spring/build/libs/app-spring-1.0-SNAPSHOT.jar app.jar
 RUN java -Djarmode=tools -jar app.jar extract --layers --destination extracted
 
 FROM bellsoft/liberica-openjre-alpine:23-cds
