@@ -13,7 +13,7 @@
   - opensearch_pass=adm-Password0
 - https://rubular.com/ - проверка regexp для fluent_bit
 
-- запуск Gradle
+### Запуск Gradle
 
 export JAVA_HOME=~/jdk-21.0.9/
 ./gradlew :project-build:postgre-repo:generateJooq --stacktrace
@@ -21,7 +21,10 @@ export JAVA_HOME=~/jdk-21.0.9/
 ./gradlew :project-build:postgre-repo:update --info
 ./gradlew :project-build:postgre-repo:test --info
 ./gradlew :project-build:app-spring:test --info -Puse.db.server=true -Puse.db.container=true
+./gradlew :project-build:app-spring:bootJar --info
+$JAVA_HOME/bin/java -jar project-build/app-spring/build/libs/app-spring-1.0-SNAPSHOT.jar
 
+### Контейнеры
 - запуск докер контейнер с Postgre и контроль работы. Ссылка на docker image - https://hub.docker.com/_/postgres
     docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432:5432 postgres:15.4
     docker exec -it some-postgres bash
@@ -29,7 +32,8 @@ export JAVA_HOME=~/jdk-21.0.9/
     docker rm `docker ps -a | grep postgres | awk '{ print $1}'`
     sudo ss -tln
 
-  - Клиент для Postgre
+### Клиент для Postgre
+
     sudo apt install postgresql-client
     psql "host=localhost port=5432 dbname=postgres user=postgres"
        - \dt
