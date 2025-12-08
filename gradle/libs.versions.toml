@@ -32,6 +32,8 @@ coroutines-reactive = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-react
 coroutines-reactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor", version.ref = "coroutines" }
 coroutines-reactor-extentions = { module = "io.projectreactor.kotlin:reactor-kotlin-extensions" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+
 
 # KLOGGING ---
 klogging = { module = "io.klogging:klogging-jvm",  version = "0.10.1"}
