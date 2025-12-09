@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.otus.kotlin.course.app.spring.base.PsSettings
 import ru.otus.kotlin.course.app.spring.base.PsWsRepo
-import ru.otus.kotlin.course.app.spring.biz.PsStubProcessor
+import ru.otus.kotlin.course.app.spring.biz.PsProcessor
 import ru.otus.kotlin.course.common.PsCoreSettings
 import ru.otus.kotlin.course.common.logger.PsLoggerProvider
 import ru.otus.kotlin.course.common.worker.IPsProcessor
@@ -13,7 +13,7 @@ import ru.otus.kotlin.course.common.worker.IPsProcessor
 class PsConfig {
 
     @Bean
-    fun processor(): IPsProcessor = PsStubProcessor()
+    fun processor(): IPsProcessor = PsProcessor()
     @Bean
     fun loggerProvider(): PsLoggerProvider = PsLoggerProvider()
     @Bean

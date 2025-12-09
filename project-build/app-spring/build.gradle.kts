@@ -25,11 +25,12 @@ dependencies {
 	implementation(projects.contextCommon)
 	implementation(projects.contextStubs)
 	implementation(projects.contextMappers)
-
+	implementation(projects.libCor)
 	// Tests
 	testImplementation(kotlin("test"))
 	testImplementation(libs.test.spring.boot)
 	testImplementation(libs.test.spring.kafka)
+	testImplementation(libs.coroutines.test)
 //	testImplementation("io.projectreactor:reactor-test")
 //	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 //	testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
