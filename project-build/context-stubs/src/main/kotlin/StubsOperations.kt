@@ -1,6 +1,8 @@
 package ru.otus.kotlin.course.common.stubs
 
 import ru.otus.kotlin.course.common.PsBeContext
+import ru.otus.kotlin.course.common.helpers.fail
+import ru.otus.kotlin.course.common.helpers.validationErr
 import ru.otus.kotlin.course.common.models.*
 import ru.otus.kotlin.course.cor.ICorChainDsl
 import ru.otus.kotlin.course.cor.worker
@@ -82,10 +84,10 @@ fun ICorChainDsl<PsBeContext>.stubNoCase(title: String) = worker {
     this.description = "Stub for Case NONE"
     on {this.workMode == PsWorkMode.STUB && this.state == PsState.RUNNING }
     handle {
-        this.fail(PsError (
-                code = "validation",
+        this.fail(
+            validationErr(
+                code = "stab-no-case",
                 field = "stub",
-                group = "validation",
                 message = "Wrong stub case is requested: ${stubCase.name}"
             )
         )

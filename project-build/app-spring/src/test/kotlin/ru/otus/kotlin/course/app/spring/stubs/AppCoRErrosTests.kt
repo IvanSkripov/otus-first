@@ -15,7 +15,7 @@ import kotlin.test.assertTrue
 class AppCoRErrosTests {
 
 	val processor = PsProcessor(PsCoreSettings.NONE)
-	val VALIDATION_CODE = "validation"
+	val VALIDATION_CODE = "validation-stab-no-case"
 
 	@Test
 	fun createTest() = runTest {

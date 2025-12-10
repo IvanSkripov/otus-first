@@ -22,6 +22,12 @@ fun  ICorChainDsl<PsBeContext>.stubs (title: String = "Обработка ста
     on { this.state == PsState.RUNNING && this.workMode == PsWorkMode.STUB }
 }
 
+fun  ICorChainDsl<PsBeContext>.validation (title: String = "Валидация", block: ICorChainDsl<PsBeContext>.() -> Unit) = chain {
+    block()
+    this.title = title
+    on { this.state == PsState.RUNNING && this.workMode != PsWorkMode.STUB }
+}
+
 fun  ICorChainDsl<PsBeContext>.initStatus (title: String = "Инициализируем статус") = worker {
     this.title = title
     this.description = "Prepare PsBeContext"

@@ -24,8 +24,6 @@ data class PsBeContext (
     var responseList : MutableList<PsImage> = mutableListOf()
 )
 {
-    fun fail (err: PsError) {
-        errors.add(err)
-    }
+
 
 }
