@@ -28,3 +28,27 @@ ext {
     //set("api-spec", specDir.file("open-api-images.yaml").toString())
     set("api-spec", specDir.file("open-api-postfull-images.yaml").toString())
 }
+
+tasks {
+    register("build" ) {
+        group = "build"
+    }
+    register("clean" ) {
+        group = "build"
+        subprojects.forEach { proj ->
+            println("PROJ $proj")
+            proj.getTasksByName("clean", false).also {
+                this@register.dependsOn(it)
+            }
+        }
+    }
+    register("test" ) {
+        group = "verification"
+        subprojects.forEach { proj ->
+            println("PROJ $proj")
+            proj.getTasksByName("test", false).also {
+                this@register.dependsOn(it)
+            }
+        }
+    }
+}

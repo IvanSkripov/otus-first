@@ -77,7 +77,7 @@ class AppCoRValTests {
 		val ctx = PsBeContext(
 			command = PsCommand.DELETE,
 			workMode = PsWorkMode.TEST,
-			request = PsImageStubsItems.SIMPLE_REQUEST
+			request = PsImage()
 		)
 
 		processor.exec(ctx)
@@ -94,7 +94,7 @@ class AppCoRValTests {
 		val ctx = PsBeContext(
 			command = PsCommand.DOWNLOAD,
 			workMode = PsWorkMode.TEST,
-			request = PsImageStubsItems.SIMPLE_REQUEST
+			request = PsImage()
 		)
 
 		processor.exec(ctx)
@@ -128,7 +128,7 @@ class AppCoRValTests {
 		val ctx = PsBeContext(
 			command = PsCommand.LINK,
 			workMode = PsWorkMode.TEST,
-			request = PsImageStubsItems.SIMPLE_REQUEST
+			request = PsImage()
 		)
 
 		processor.exec(ctx)

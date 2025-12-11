@@ -24,12 +24,6 @@ suspend inline fun PsSettings.controllerHelper(
     return try {
         ctx.getRequest()
         logger.info("Request $logId started", mapOf("BeContext" to ctx))
-
-        ctx.imageRepo = when(ctx.workMode) {
-            PsWorkMode.TEST -> corSettings.repoTest
-            PsWorkMode.PROD -> corSettings.repoProd
-            else -> IImageRepo.NONE
-        }
         processor.exec(ctx)
         logger.info("Request $logId finished", mapOf("BeContext" to ctx))
         ctx

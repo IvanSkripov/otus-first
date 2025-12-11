@@ -1,6 +1,8 @@
 package ru.otus.kotlin.course.common
 
 import ru.otus.kotlin.course.common.models.*
+import ru.otus.kotlin.course.common.repo.DBResultNONE
+import ru.otus.kotlin.course.common.repo.IDBResult
 import ru.otus.kotlin.course.common.repo.IImageRepo
 import ru.otus.kotlin.course.common.repo.ImageRepoBase
 import ru.otus.kotlin.course.common.stubs.PsStubs
@@ -23,6 +25,7 @@ data class PsBeContext (
     var request: PsImage = PsImage(),
     var filterString: String = "",
 
+    var dbResponse: IDBResult = DBResultNONE,
     var response: PsImage = PsImage(),
     var responseList : MutableList<PsImage> = mutableListOf()
 )

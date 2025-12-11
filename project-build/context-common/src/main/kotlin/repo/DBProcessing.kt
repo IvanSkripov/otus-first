@@ -8,6 +8,8 @@ const val ERROR_GROUP_REPO = "repo"
 
 interface IDBResult
 
+object DBResultNONE: IDBResult
+
 data class DBGetImage ( val image: PsImage): IDBResult {
 }
 
@@ -26,6 +28,11 @@ data class DBError (
 data class DBImageRequest (
     val image: PsImage
 )
+
+fun IDBResult.getResultIfPositive(): PsImage?  = when(this) {
+    is DBGetImage -> this.image
+    else -> null
+}
 
 @JvmInline
 value class DBImageId (

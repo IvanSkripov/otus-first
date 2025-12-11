@@ -18,7 +18,7 @@ import ru.otus.kotlin.course.common.worker.IPsProcessor
 class PsConfig (val postgresConfig: SpringSQLParams) {
 
     @Bean
-    fun processor(): IPsProcessor = PsProcessor()
+    fun processor(): IPsProcessor = PsProcessor(corSettings())
     @Bean
     fun loggerProvider(): PsLoggerProvider = PsLoggerProvider()
     @Bean
