@@ -4,8 +4,7 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation(projects.apis)
-    implementation(projects.contextCommon)
-    implementation(projects.libCor)
+    implementation(libs.coroutines.core)
     testImplementation(kotlin("test-junit"))
+    testImplementation(libs.coroutines.test)
 }

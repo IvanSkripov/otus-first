@@ -23,4 +23,7 @@ data class PsBeContext (
     var response: PsImage = PsImage(),
     var responseList : MutableList<PsImage> = mutableListOf()
 )
-{ }
+{
+
+
+}
