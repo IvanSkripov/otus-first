@@ -31,6 +31,9 @@ export JAVA_HOME=~/jdk-21.0.9/
 - тестирование
     ./gradlew :project-build:postgre-repo:test --info
     ./gradlew :project-build:app-spring:test --info -Puse.db.server=true -Puse.db.container=true
+    ./gradlew :project-build:test --info -Puse.db.server=true -Puse.db.container=true
+    zip reports.zip  -r ./project-build/app-spring/build/reports/*
+
 
 - собрать fatJar и запустить
     ./gradlew :project-build:app-spring:bootJar --info
