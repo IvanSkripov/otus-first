@@ -2,57 +2,37 @@ package ru.otus.kotlin.course.app.spring.ws
 
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.reactor.asFlux
-import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertNotNull
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.core.io.buffer.DataBuffer
 import org.springframework.web.reactive.socket.WebSocketMessage
 import org.springframework.web.reactive.socket.WebSocketSession
-import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient
-import org.springframework.web.reactive.socket.client.WebSocketClient
 import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 import ru.otus.kotlin.course.api.v1.*
 import ru.otus.kotlin.course.api.v1.models.*
+import ru.otus.kotlin.course.app.spring.AppWsBase
+import ru.otus.kotlin.course.common.models.PsError
 import ru.otus.kotlin.course.common.stubs.*
-import java.net.URI
-import java.nio.ByteBuffer
-import java.time.Duration
-import java.util.concurrent.atomic.AtomicReference
+import ru.otus.kotlin.course.mappers.toTransport
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AppSpringWsTest {
+class AppSpringWsTest : AppWsBase() {
 
     @LocalServerPort
     var port: Int = 0
 
+    override fun port(): Int = port
+
     @Test
     fun createImage() {
         val p = stubCreate(false)
+        val data = apiCreateRequestToBytes(CreateRequest(p.first,  byteArrayOf(0x31, 0x32, 0x33)))
 
-        val f: WebSocketSession.() -> Flux<WebSocketMessage> = {
-
-            listOf(apiCreateRequestToBytes(CreateRequest(p.first,  byteArrayOf(0x31, 0x32, 0x33))))
-                .asFlow()
-                .map {
-                    when(it) {
-                        is ByteArray -> binaryMessage { factory ->
-                            factory.wrap(ByteBuffer.wrap(it))
-                        }
-                        else -> throw IllegalArgumentException("Wrong type of message")
-                    }
-                }
-                .asFlux()
-        }
-
-        sendAndReceive <IResponse> (f) { pl ->
+        sendAndReceive <ByteArray, IResponse> (data) { pl ->
             val f = pl[0]
             val s = pl[1]
             println("${f}")
@@ -65,11 +45,7 @@ class AppSpringWsTest {
     @Test
     fun readImage() {
         val p = stubRead(false)
-        val f: WebSocketSession.() -> Flux<WebSocketMessage> = {
-            listOf(p.first).asFlow().map { textMessage(serializeRq(it)) }.asFlux()
-        }
-
-        sendAndReceive <IResponse> (f) { pl ->
+        sendAndReceive <ImageReadRequest, IResponse> (p.first) { pl ->
             val f = pl[0]
             val s = pl[1]
             println("${f}")
@@ -86,7 +62,7 @@ class AppSpringWsTest {
             listOf(p.first).asFlow().map { textMessage(serializeRq(it)) }.asFlux()
         }
 
-        sendAndReceive <IResponse> (f) { pl ->
+        sendAndReceive <ImageUpdateRequest, IResponse> (p.first) { pl ->
             val f = pl[0]
             val s = pl[1]
             println("${f}")
@@ -99,11 +75,8 @@ class AppSpringWsTest {
     @Test
     fun linkImage() {
         val p = stubLink(false)
-        val f: WebSocketSession.() -> Flux<WebSocketMessage> = {
-            listOf(p.first).asFlow().map { textMessage(serializeRq(it)) }.asFlux()
-        }
 
-        sendAndReceive <IResponse> (f) { pl ->
+        sendAndReceive <ImageLinkRequest, IResponse> (p.first) { pl ->
             val f = pl[0]
             val s = pl[1]
             println("${f}")
@@ -116,11 +89,8 @@ class AppSpringWsTest {
     @Test
     fun deleteImage() {
         val p = stubDelete(false)
-        val f: WebSocketSession.() -> Flux<WebSocketMessage> = {
-            listOf(p.first).asFlow().map { textMessage(serializeRq(it)) }.asFlux()
-        }
 
-        sendAndReceive <IResponse> (f) { pl ->
+        sendAndReceive <ImageDeleteRequest, IResponse> (p.first) { pl ->
             val f = pl[0]
             val s = pl[1]
             println("${f}")
@@ -133,11 +103,8 @@ class AppSpringWsTest {
     @Test
     fun searchImage() {
         val p = stubSearch(false)
-        val f: WebSocketSession.() -> Flux<WebSocketMessage> = {
-            listOf(p.first).asFlow().map { textMessage(serializeRq(it)) }.asFlux()
-        }
 
-        sendAndReceive <IResponse> (f) { pl ->
+        sendAndReceive <ImageSearchRequest, IResponse> (p.first) { pl ->
             val f = pl[0]
             val s = pl[1]
             println("${f}")
@@ -150,11 +117,8 @@ class AppSpringWsTest {
     @Test
     fun downloadImage() {
         val p = stubDownload()
-        val f: WebSocketSession.() -> Flux<WebSocketMessage> = {
-            listOf(p.first).asFlow().map { textMessage(serializeRq(it)) }.asFlux()
-        }
 
-        sendAndReceive <IResponse> (f) { pl ->
+        sendAndReceive <ImageDownloadRequest, IResponse> (p.first) { pl ->
             val f = pl[0]
             val s = pl[1]
             println("${f}")
@@ -164,41 +128,42 @@ class AppSpringWsTest {
         }
     }
 
-    private fun <R: IResponse> sendAndReceive(produce: WebSocketSession.() -> Flux<WebSocketMessage>, block: (List<Any>) -> Unit) = runBlocking {
-        val client: WebSocketClient = ReactorNettyWebSocketClient()
-        val uri = URI.create("ws://localhost:$port/ws")
-        val actualRef = AtomicReference<List<Any>>()
+    @Test
+    fun errorsImage() {
+        val items: List<Pair<DebugItem.Stub, PsError>> = listOf(
+            Pair(
+                DebugItem.Stub.WRONG_OWNER,
+                PsImageStubsItems.WRONG_OWNER
+            ),
+            Pair(
+                DebugItem.Stub.WRONG_LINK,
+                PsImageStubsItems.WRONG_LINK
+            ),
+            Pair(
+                DebugItem.Stub.WRONG_IMAGE_FORMAT,
+                PsImageStubsItems.WRONG_IMAGE_FORMAT
+            ),
+            Pair(
+                DebugItem.Stub.WRONG_IMAGE_SIZE,
+                PsImageStubsItems.WRONG_IMAGE_SIZE
+            )
+        )
 
-        client.execute(uri) { webSocketSession: WebSocketSession ->
-            webSocketSession
-                .send(webSocketSession.produce())
-                .thenMany(webSocketSession.receive().take(2).map{message ->
-                    message.mapper()
-                })
-                .collectList()
-                .doOnNext(actualRef::set)
-                .then()
-        }.block(Duration.ofSeconds(5))
+        items.forEach {
+            val p = stubReadErrors(
+                stubError = it.first,
+                error = it.second.toTransport(),
+                flag = false
+            )
 
-        assertThat(actualRef.get()).isNotNull()
-        val payload = actualRef.get().map { deserializeRs<R>(it) }
-        assertThat(payload.size == 2)
-        block(payload)
-    }
-
-    private fun WebSocketMessage.mapper(): Any {
-        if (type == WebSocketMessage.Type.TEXT) {
-            return getPayloadAsText(Charsets.UTF_8)
+            sendAndReceive<ImageReadRequest, IResponse>(p.first) { pl ->
+                val f = pl[0]
+                val s = pl[1]
+                println("---> ${f}")
+                println("<--- ${s}")
+                assertIs<WSInitResponse>(f)
+                assertEquals(p.second, s)
+            }
         }
-
-        val buf = payload
-        val bytes = ByteArray(buf.readableByteCount())
-        buf.read(bytes)
-        return bytes
-    }
-    private fun <R: IRequest> serializeRq(r: R) = apiRequestSerialize(r)
-    private fun <R: IResponse> deserializeRs(value: Any) = when(value) {
-        is String -> apiResponseDeserialize<R>(value)
-        else -> value
     }
 }

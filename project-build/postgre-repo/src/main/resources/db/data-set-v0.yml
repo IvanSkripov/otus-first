@@ -1,0 +1,167 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 1
+      author: iskripov
+      changes:
+        # 1) Таблица изображений
+        - createTable:
+            tableName: images
+            remarks: Изображения
+            columns:
+              - column:
+                  name: id
+                  type: varchar(100)
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: image_pk
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(254)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: description
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: uploadUrl
+                  type: varchar(1024)
+                  remarks: Ссылка на изображение при загрузке
+              - column:
+                  name: imageUrl
+                  type: varchar(1024)
+                  remarks: Ссылка на изображение
+              - column:
+                  name: previewUrl
+                  type: varchar(1024)
+                  remarks: Ссылка на preview
+              - column:
+                  name: permanentLinkUrl
+                  type: varchar(1024)
+                  remarks: Ссылка на постоянную локацию изображения
+
+        # 2) Таблица тегов
+        - createTable:
+            tableName: tags
+            columns:
+              - column:
+                  name: id
+                  type: varchar(128)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: value
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image_id
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+
+        # 3) Таблица меток (справочник ключей меток)
+        - createTable:
+            tableName: labels
+            columns:
+              - column:
+                  name: key
+                  type: varchar(32)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+        - addUniqueConstraint:
+            tableName: labels
+            columnNames: key
+            constraintName: uq_labels_key
+
+        # 4) Таблица значений меток
+        - createTable:
+            tableName: label_values
+            columns:
+              - column:
+                  name: label_key
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image_id
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value
+                  type: varchar(255)
+
+        - addUniqueConstraint:
+            tableName: label_values
+            columnNames: label_key, image_id
+            constraintName: uk_label_value
+            deferrable: true
+            initiallyDeferred: true
+            validate: true
+
+        # 5) Таблица для хранения файлов
+        - createTable:
+            tableName: files
+            columns:
+              - column:
+                  name: image_id
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: data
+                  type: bytea
+                  constraints:
+                    nullable: true
+        - addUniqueConstraint:
+            tableName: files
+            columnNames: image_id
+            constraintName: uq_files_key
+
+        # Индексы для ускорения связей и поиска
+        - createIndex:
+            tableName: images
+            indexName: ix_imagestitle
+            columns:
+              - column:
+                  name: title
+
+        - createIndex:
+            tableName: files
+            indexName: ix_files_images_id
+            columns:
+              - column:
+                  name: image_id
+
+  - changeSet:
+      id: 2
+      author: iskripov
+      changes:
+        changes:
+          - insert:
+              tableName: labels
+              columns:
+                - column:
+                    name: key
+                    value: author
+                - column:
+                    name: description
+                    value: Автор
+          - insert:
+              tableName: labels
+              columns:
+                - column:
+                    name: key
+                    value: format
+                - column:
+                    name: description
+                    value: Формат изображения
