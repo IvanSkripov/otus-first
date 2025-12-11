@@ -130,11 +130,15 @@ class AppSpringWsTest : AppWsBase() {
 
     @Test
     fun errorsImage() {
-        val items: List<Pair<DebugItem.Stub, PsError>> = listOf(
+        val itemsRead: List<Pair<DebugItem.Stub, PsError>> = listOf(
             Pair(
                 DebugItem.Stub.WRONG_OWNER,
                 PsImageStubsItems.WRONG_OWNER
             ),
+
+        )
+
+        val itemsCreate: List<Pair<DebugItem.Stub, PsError>> = listOf(
             Pair(
                 DebugItem.Stub.WRONG_LINK,
                 PsImageStubsItems.WRONG_LINK
@@ -149,7 +153,7 @@ class AppSpringWsTest : AppWsBase() {
             )
         )
 
-        items.forEach {
+        itemsRead.forEach {
             val p = stubReadErrors(
                 stubError = it.first,
                 error = it.second.toTransport(),
@@ -157,6 +161,25 @@ class AppSpringWsTest : AppWsBase() {
             )
 
             sendAndReceive<ImageReadRequest, IResponse>(p.first) { pl ->
+                val f = pl[0]
+                val s = pl[1]
+                println("---> ${f}")
+                println("<--- ${s}")
+                assertIs<WSInitResponse>(f)
+                assertEquals(p.second, s)
+            }
+        }
+
+        itemsCreate.forEach {
+            val p = stubCreateErrors(
+                stubError = it.first,
+                error = it.second.toTransport(),
+                flag = false
+            )
+
+            val data = apiCreateRequestToBytes(CreateRequest(p.first,  byteArrayOf(0x31, 0x32, 0x33)))
+
+            sendAndReceive<ByteArray, IResponse>(data) { pl ->
                 val f = pl[0]
                 val s = pl[1]
                 println("---> ${f}")

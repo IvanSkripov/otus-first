@@ -10,6 +10,7 @@ dependencies {
 
     implementation(projects.apis)
     implementation(projects.contextCommon)
+    implementation(projects.libCor)
 
     testImplementation(kotlin("test"))
     testImplementation(libs.test.coroutines)

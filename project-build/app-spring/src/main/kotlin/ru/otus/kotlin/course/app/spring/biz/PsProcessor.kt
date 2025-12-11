@@ -38,6 +38,7 @@ class PsProcessor(
                 stubReadOk("Ok")
                 stubWrongOwner("Пользователь не является владельцем изображения")
                 stubDbError("Ошибка в БД")
+                stubWrongLink("Неверная ссылка на изображение")
                 stubNoCase("Ошибка: запрошенный стаб недопустим")
             }
             validation {
@@ -50,6 +51,7 @@ class PsProcessor(
                 stubUpdateOk("Ok")
                 stubWrongOwner("Пользователь не является владельцем изображения")
                 stubDbError("Ошибка в БД")
+                stubWrongLink("Неверная ссылка на изображение")
                 stubNoCase("Ошибка: запрошенный стаб недопустим")
             }
             validation {
@@ -121,13 +123,61 @@ class PsProcessor(
 }
 
 
-//var id: PsImageId = PsImageId.NONE,
-//var title: String = "",
-//var desc: String = "",
-//val tags: MutableList<String> = mutableListOf(),
-//val labels: MutableList<PsLabel> = mutableListOf(),
+//// TODO: Generate real link
+//private val PERMANENT_URL = "www.otus-first.ru/permanent/"
+//private val PREVIEW_URL = "www.otus-first.ru/preview/"
+//private val IMAGE_URL = "www.otus-first.ru/image/"
 //
-//var uploadUrl: String = "",
-//var imageUrl: String = "",
-//var previewUrl: String = "",
-//var permanentLinkUrl: String = "",
+//private suspend fun execLogic(ctx: PsBeContext) {
+//    ctx.state = PsState.RUNNING
+//    when(ctx.command) {
+//        PsCommand.CREATE -> {
+//            ctx.request.imageUrl = "${IMAGE_URL}${uuid4().toString()}"
+//            ctx.request.previewUrl = "${PREVIEW_URL}${uuid4().toString()}"
+//            val res = ctx.imageRepo.createImage(DBImageRequest(ctx.request))
+//            resultUpdateContext(ctx, res)
+//        }
+//        PsCommand.READ -> {
+//            val res = ctx.imageRepo.readImage(ctx.request.id.toDB() )
+//            resultUpdateContext(ctx, res)
+//        }
+//        PsCommand.DOWNLOAD -> {
+//            val res = ctx.imageRepo.readImage(ctx.request.id.toDB(), true)
+//            resultUpdateContext(ctx, res)
+//        }
+//        PsCommand.LINK -> {
+//            val res = ctx.imageRepo.readImage(ctx.request.id.toDB())
+//            val old = getResultIfPositive(res)
+//            if (old != null) {
+//                old.permanentLinkUrl = "${PERMANENT_URL}${uuid4().toString()}"
+//                val res = ctx.imageRepo.updateImage(DBImageRequest(old),)
+//                resultUpdateContext(ctx, res)
+//            }
+//        }
+//        PsCommand.DELETE -> {
+//            val res = ctx.imageRepo.deleteImage(ctx.request.id.toDB())
+//            resultUpdateContext(ctx, res)
+//        }
+//        PsCommand.UPDATE -> {
+//            val res = ctx.imageRepo.updateImage(DBImageRequest(ctx.request))
+//            resultUpdateContext(ctx, res)
+//        }
+//        PsCommand.SEARCH -> {
+//            val res = ctx.imageRepo.searchImages(DBImageSearchFilter(ctx.filterString))
+//            resultUpdateContext(ctx, res)
+//        }
+//        else -> TODO("Not implemented")
+//    }
+//}
+//
+//
+//private fun resultUpdateContext(ctx: PsBeContext, res: IDBResult) {
+//    when (res) {
+//        is DBGetImage -> ctx.response = res.image
+//        is DBGetImages -> ctx.responseList = res.images.toMutableList()
+//        is DBError -> {
+//            ctx.errors.add(res.asPsError())
+//            ctx.state = PsState.FAILING
+//        }
+//    }
+//}
