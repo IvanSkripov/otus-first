@@ -201,7 +201,7 @@ services:
 
   psql:
     image: postgres
-    container_name: postgresql
+    container_name: postgresql:15.4
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -209,27 +209,26 @@ services:
     expose:
       - "5432"
     environment:
-      POSTGRES_PASSWORD: mysecretpassword
-      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_USER: ${DB_USER}
       POSTGRES_DB: postgres
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready" ]
-      interval: 10s
+      interval: 30s
       timeout: 5s
       retries: 5
 
-  liquibase:
-    image: "ok-marketplace-migration-pg:0.1.0"
-    environment:
-      LIQUIBASE_URL:
-      LIQUIBASE_COMMAND_URL: jdbc:postgresql://psql:5432/marketplace_ads
-      LIQUIBASE_COMMAND_USERNAME: postgres
-      LIQUIBASE_COMMAND_PASSWORD: "marketplace-pass"
-      LIQUIBASE_LIQUIBASE_SCHEMA_NAME: public
-    #      tableName: marketplace_ads
-    depends_on:
-      psql:
-        condition: service_healthy
+#  liquibase:
+#    image: "migration:${VERSION}"
+#    environment:
+#      LIQUIBASE_URL:
+#      LIQUIBASE_COMMAND_URL: ${DB_URL}
+#      LIQUIBASE_COMMAND_USERNAME: ${DB_USER}
+#      LIQUIBASE_COMMAND_PASSWORD: ${DB_PASS}
+#      LIQUIBASE_LIQUIBASE_SCHEMA_NAME: public
+#    depends_on:
+#      psql:
+#        condition: service_healthy
 
 
 volumes:

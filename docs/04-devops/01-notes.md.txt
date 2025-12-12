@@ -52,6 +52,10 @@ export JAVA_HOME=~/jdk-21.0.9/
     docker build -t app-spring:$VERSION --build-arg VERSION=$VERSION -f app.Dockerfile ../../
     docker run  -p 8080:8080 app-sprint:0.0.1
 
+- сборка через docker compose
+    docker compose -f docker-compose-minio.yml up -d
+    docker rm `docker ps -a | grep -v CONTAINER | awk ' { a = a " "  $1 } END { print a }' `
+
 - просмотр логов nginx
     docker logs `docker ps | grep nginx | awk '{ print $1}'`
 
