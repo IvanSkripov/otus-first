@@ -44,6 +44,8 @@ ENV JAVA_JMX_REMOTE_OPTS="-Djava.rmi.server.hostname=127.0.0.1 \
     -Dcom.sun.management.jmxremote.port=5005 \
     -Dcom.sun.management.jmxremote.rmi.port=5005"
 
+EXPOSE 8080/tcp
+
 ENTRYPOINT java \
     -XX:ReservedCodeCacheSize=$JAVA_RESERVED_CODE_CACHE_SIZE \
     -XX:MaxDirectMemorySize=$JAVA_MAX_DIRECT_MEMORY_SIZE \

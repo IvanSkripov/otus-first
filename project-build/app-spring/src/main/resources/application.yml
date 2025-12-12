@@ -31,7 +31,7 @@ logging:
     root: INFO
 
 psql:
-  url: jdbc:postgresql://localhost:5432/postgres
-  user: postgres
-  password: mysecretpassword
+  url: ${DB_URL}
+  user: ${DB_USER}
+  password: ${DB_PASS}
   schema: public

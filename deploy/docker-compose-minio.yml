@@ -13,25 +13,48 @@
 services:
 
   app:
-    image: nginx:latest
-    depends_on:
-      - fluent-bit
-      - envoy
- #     - minio
-    volumes:
-      - ./volumes/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./volumes/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./volumes/nginx/html:/usr/share/nginx/html
-    logging:
-      # используемый драйвер логгирования
-      driver: "fluentd"
-      options:
-        # куда посылать лог-сообщения, необходимо чтобы адрес
-        # совпадал с настройками плагина forward
-        fluentd-address: localhost:24224
-        # теги используются для маршрутизации лог-сообщений, тема
-        # маршрутизации будет рассмотрена ниже
-        tag: app.logs
+#    image: nginx:latest
+#    depends_on:
+#      - fluent-bit
+#      - envoy
+# #     - minio
+#    volumes:
+#      - ./volumes/nginx/default.conf:/etc/nginx/conf.d/default.conf
+#      - ./volumes/nginx/nginx.conf:/etc/nginx/nginx.conf
+#      - ./volumes/nginx/html:/usr/share/nginx/html
+#    logging:
+#      # используемый драйвер логгирования
+#      driver: "fluentd"
+#      options:
+#        # куда посылать лог-сообщения, необходимо чтобы адрес
+#        # совпадал с настройками плагина forward
+#        fluentd-address: localhost:24224
+#        # теги используются для маршрутизации лог-сообщений, тема
+#        # маршрутизации будет рассмотрена ниже
+#        tag: app.logs
+
+      image: app-spring:${VERSION}
+      build:
+        context: ./../
+        dockerfile: ./dockers/app.Dockerfile
+      environment:
+        - DB_URL=${DB_URL}
+        - DB_USER=${DB_USER}
+        - DB_PASS=${DB_PASS}
+      depends_on:
+        - fluent-bit
+        - envoy
+   #     - minio
+      logging:
+        # используемый драйвер логгирования
+        driver: "fluentd"
+        options:
+          # куда посылать лог-сообщения, необходимо чтобы адрес
+          # совпадал с настройками плагина forward
+          fluentd-address: localhost:24224
+          # теги используются для маршрутизации лог-сообщений, тема
+          # маршрутизации будет рассмотрена ниже
+          tag: app.logs
 
   fluent-bit:
 #    Logstash: 2GB RAM 400MB Docker
