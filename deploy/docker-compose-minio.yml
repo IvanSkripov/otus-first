@@ -200,8 +200,8 @@ services:
       retries: 3
 
   psql:
-    image: postgres
-    container_name: postgresql:15.4
+    image: postgresql:15.4
+    container_name: postgresql
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
