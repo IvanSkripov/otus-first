@@ -10,7 +10,7 @@ databaseChangeLog:
               columns:
                 - column:
                     name: id
-                    value: 00000
+                    value: Migration-00000
                 - column:
                     name: title
                     value: Migrated image
@@ -19,22 +19,22 @@ databaseChangeLog:
                     value: www.images.ru/image-001.png
                 - column:
                     name: imageUrl
-                    value: www.otus-first.ru/image/00000
+                    value: www.otus-first.ru/image/Migration-00000
                 - column:
                     name: previewUrl
-                    value: www.otus-first.ru/preview/00000
+                    value: www.otus-first.ru/preview/Migration-00000
           - insert:
               tableName: tags
               columns:
                 - column:
                     name: id
-                    value: 00001
+                    value: Migration-00001
                 - column:
                     name: value
                     value: MigratedTag
                 - column:
                     name: image_id
-                    value: 00000
+                    value: Migration-00000
           - insert:
               tableName: label_values
               columns:
@@ -46,7 +46,7 @@ databaseChangeLog:
                     value: Алексей Вячеславович Бродович
                 - column:
                     name: image_id
-                    value: 00000
+                    value: Migration-00000
           - insert:
               tableName: files
               columns:
@@ -55,6 +55,6 @@ databaseChangeLog:
                     value: E'\\xDEADBEEF'
                 - column:
                     name: image_id
-                    value: 00000
+                    value: Migration-00000
 
 
