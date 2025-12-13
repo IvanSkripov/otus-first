@@ -207,7 +207,6 @@ services:
       context: ./../
       dockerfile: ./dockers/liqbase.Dockerfile
     environment:
-      LIQUIBASE_URL:
       LIQUIBASE_COMMAND_URL: ${DB_URL}
       LIQUIBASE_COMMAND_USERNAME: ${DB_USER}
       LIQUIBASE_COMMAND_PASSWORD: ${DB_PASS}

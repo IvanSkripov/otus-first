@@ -57,6 +57,7 @@ export JAVA_HOME=~/jdk-21.0.9/
     docker compose -f docker-compose-minio.yml up -d
     docker rm `docker ps -a | grep -v CONTAINER | awk ' { a = a " "  $1 } END { print a }' `
     docker stop `docker ps -a | grep -v CONTAINER | awk ' { a = a " "  $1 } END { print a }' `
+    docker rmi `docker images | grep -v CONTAINER | grep none | awk ' { a = a " "  $3 } END { print a }' `
 
 - просмотр логов nginx
     docker logs `docker ps | grep nginx | awk '{ print $1}'`
@@ -64,7 +65,11 @@ export JAVA_HOME=~/jdk-21.0.9/
 - миграция
     export VERSION=0.0.1
     docker build -t migration:$VERSION --build-arg VERSION=$VERSION -f liqbase.Dockerfile ../../
-    docker run migration:$VERSION
+    set -a; source .env; set +a
+    docker run -e LIQUIBASE_COMMAND_URL=$DB_URL -e LIQUIBASE_COMMAND_USERNAME=$DB_USER -e LIQUIBASE_COMMAND_PASSWORD=$DB_PASS migration:$VERSION
+
+
+
 
 ### Клиент для Postgre
 
