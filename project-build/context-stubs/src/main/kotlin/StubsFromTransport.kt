@@ -91,9 +91,10 @@ fun stubSearchFromTransport(): Pair<ImageSearchRequest, PsBeContext> {
         ),
         PsBeContext(
             command = PsCommand.SEARCH,
-            workMode = PsWorkMode.TEST,
+            workMode = PsWorkMode.STUB,
             stubCase = PsStubs.SUCCESS,
             filterString = SEARCH_STRING
         )
     )
 }
+

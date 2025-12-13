@@ -29,3 +29,9 @@ springdoc:
 logging:
   level:
     root: INFO
+
+psql:
+  url: ${DB_URL}
+  user: ${DB_USER}
+  password: ${DB_PASS}
+  schema: public

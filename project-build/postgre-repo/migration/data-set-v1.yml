@@ -1,0 +1,60 @@
+databaseChangeLog:
+
+- changeSet:
+      id: 3
+      author: iskripov
+      changes:
+        changes:
+          - insert:
+              tableName: images
+              columns:
+                - column:
+                    name: id
+                    value: Migration-00000
+                - column:
+                    name: title
+                    value: Migrated image
+                - column:
+                    name: uploadUrl
+                    value: www.images.ru/image-001.png
+                - column:
+                    name: imageUrl
+                    value: www.otus-first.ru/image/Migration-00000
+                - column:
+                    name: previewUrl
+                    value: www.otus-first.ru/preview/Migration-00000
+          - insert:
+              tableName: tags
+              columns:
+                - column:
+                    name: id
+                    value: Migration-00001
+                - column:
+                    name: value
+                    value: MigratedTag
+                - column:
+                    name: image_id
+                    value: Migration-00000
+          - insert:
+              tableName: label_values
+              columns:
+                - column:
+                    name: label_key
+                    value: author
+                - column:
+                    name: value
+                    value: Алексей Вячеславович Бродович
+                - column:
+                    name: image_id
+                    value: Migration-00000
+          - insert:
+              tableName: files
+              columns:
+                - column:
+                    name: data
+                    value: E'\\xDEADBEEF'
+                - column:
+                    name: image_id
+                    value: Migration-00000
+
+

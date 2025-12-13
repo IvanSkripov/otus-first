@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - include:
+      file: data-set-v0.yml
+      relativeToChangelogFile: true
+
+  - include:
+      file: data-set-v1.yml
+      relativeToChangelogFile: true

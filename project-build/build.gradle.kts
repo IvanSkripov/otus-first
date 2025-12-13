@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.tasktree)
 }
 
 group = "ru.otus.kotlin.course"
@@ -26,4 +27,28 @@ ext {
     //set("api-spec", specDir.file("requestBody-test.yaml").toString())
     //set("api-spec", specDir.file("open-api-images.yaml").toString())
     set("api-spec", specDir.file("open-api-postfull-images.yaml").toString())
+}
+
+tasks {
+    register("build" ) {
+        group = "build"
+    }
+    register("clean" ) {
+        group = "build"
+        subprojects.forEach { proj ->
+            println("PROJ $proj")
+            proj.getTasksByName("clean", false).also {
+                this@register.dependsOn(it)
+            }
+        }
+    }
+    register("test" ) {
+        group = "verification"
+        subprojects.forEach { proj ->
+            println("PROJ $proj")
+            proj.getTasksByName("test", false).also {
+                this@register.dependsOn(it)
+            }
+        }
+    }
 }

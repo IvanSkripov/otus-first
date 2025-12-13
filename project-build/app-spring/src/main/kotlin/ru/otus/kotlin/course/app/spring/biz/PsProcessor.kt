@@ -8,6 +8,7 @@ import ru.otus.kotlin.course.common.models.PsImageId
 import ru.otus.kotlin.course.common.models.PsLabel
 import ru.otus.kotlin.course.common.stubs.*
 import ru.otus.kotlin.course.common.worker.IPsProcessor
+import ru.otus.kotlin.course.cor.chain
 import ru.otus.kotlin.course.cor.rootChain
 
 class PsProcessor(
@@ -17,6 +18,7 @@ class PsProcessor(
 
     val businessChain = rootChain<PsBeContext> {
         initStatus("Инициализируем статус")
+        initRepo ("Инициализируем репозитории", corSettings)
 
         operation("Обработка Create", PsCommand.CREATE) {
             stubs("Обработка стабов") {
@@ -32,6 +34,12 @@ class PsProcessor(
                 validateTitleNotEmpty("Проверка заголовка")
                 endValidation("Завершение проверок")
             }
+
+            chain {
+                repoCreate("Создаем изображение")
+                prepareResult("Обрабатываем результат")
+            }
+
         }
         operation("Обработка READ", PsCommand.READ) {
             stubs("Обработка стабов") {
@@ -43,6 +51,11 @@ class PsProcessor(
             validation {
                 validateId("Проверка Id")
                 endValidation("Завершение проверок")
+            }
+
+            chain {
+                repoRead("Читаем изображение")
+                prepareResult("Обрабатываем результат")
             }
         }
         operation("Обработка UPDATE", PsCommand.UPDATE) {
@@ -57,6 +70,10 @@ class PsProcessor(
                 validateTitleNotEmpty("Проверка заголовка")
                 endValidation("Завершение проверок")
             }
+            chain {
+                repoUpdate("Обновляем изображение")
+                prepareResult("Обрабатываем результат")
+            }
         }
 
         operation("Обработка DOWNLOAD", PsCommand.DOWNLOAD) {
@@ -70,6 +87,11 @@ class PsProcessor(
                 validateId("Проверка Id")
                 endValidation("Завершение проверок")
             }
+
+            chain {
+                repoDownload("Читаем изображение и скачиваем ")
+                prepareResult("Обрабатываем результат")
+            }
         }
         operation("Обработка LINK", PsCommand.LINK) {
             stubs("Обработка стабов") {
@@ -82,6 +104,11 @@ class PsProcessor(
                 validateId("Проверка Id")
                 endValidation("Завершение проверок")
             }
+
+            chain {
+                repoLink("Получаем постоянную ссылку")
+                prepareResult("Обрабатываем результат")
+            }
         }
         operation("Обработка SEARCH", PsCommand.SEARCH) {
             stubs("Обработка стабов") {
@@ -93,6 +120,11 @@ class PsProcessor(
             validation {
                 validateSearchStringNotEmpty("Проверка поискового критерия")
                 endValidation("Завершение проверок")
+            }
+
+            chain {
+                repoSearch("Ищем изображения")
+                prepareResult("Обрабатываем результат")
             }
         }
 
@@ -107,6 +139,11 @@ class PsProcessor(
                 validateId("Проверка Id")
                 endValidation("Завершение проверок")
             }
+            chain {
+                repoDelete("Удаляем изображение")
+                prepareResult("Обрабатываем результат")
+            }
+
         }
 
 
@@ -121,13 +158,5 @@ class PsProcessor(
 }
 
 
-//var id: PsImageId = PsImageId.NONE,
-//var title: String = "",
-//var desc: String = "",
-//val tags: MutableList<String> = mutableListOf(),
-//val labels: MutableList<PsLabel> = mutableListOf(),
-//
-//var uploadUrl: String = "",
-//var imageUrl: String = "",
-//var previewUrl: String = "",
-//var permanentLinkUrl: String = "",
+
+

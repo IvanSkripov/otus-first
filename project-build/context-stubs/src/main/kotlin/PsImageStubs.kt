@@ -2,6 +2,7 @@ package ru.otus.kotlin.course.common.stubs
 
 import ru.otus.kotlin.course.api.v1.models.*
 import ru.otus.kotlin.course.common.PsBeContext
+import ru.otus.kotlin.course.common.helpers.validationErr
 import ru.otus.kotlin.course.common.models.*
 import java.io.File
 import java.net.URI
@@ -15,8 +16,8 @@ internal val PERM_LINK = "www.google.com"
 internal val TAGS = mutableListOf("good", "nice")
 internal val ERORS = listOf(ResponseErrorValue("1", "4", "2", "3"))
 internal val ERORS_PS = mutableListOf(PsError("1", "2", "3", "4"))
-internal val LABELS = listOf(Label("1", "2", "3"))
-internal val LABELS_PS = mutableListOf(PsLabel("1", "2", "3"))
+internal val LABELS = listOf(Label("author", "Автор", "Александр Михайлович Родченко"))
+internal val LABELS_PS = mutableListOf(PsLabel("author", "Автор", "Александр Михайлович Родченко"))
 internal val BYTES = byteArrayOf(0x30, 0x31, 0x32)
 
 
@@ -42,6 +43,7 @@ fun stubResponseError(stub: PsStubs ): PsBeContext {
     }
 }
 
+fun getDefaultId() = IMAGE_ID
 
 // ==== STUB Helpers ===============
 

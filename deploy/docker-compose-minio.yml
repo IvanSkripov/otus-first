@@ -11,27 +11,31 @@
 # Управление пользователями http://localhost:8080/admin (keycloak)
 
 services:
-
   app:
-    image: nginx:latest
-    depends_on:
-      - fluent-bit
-      - envoy
- #     - minio
-    volumes:
-      - ./volumes/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./volumes/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./volumes/nginx/html:/usr/share/nginx/html
-    logging:
-      # используемый драйвер логгирования
-      driver: "fluentd"
-      options:
-        # куда посылать лог-сообщения, необходимо чтобы адрес
-        # совпадал с настройками плагина forward
-        fluentd-address: localhost:24224
-        # теги используются для маршрутизации лог-сообщений, тема
-        # маршрутизации будет рассмотрена ниже
-        tag: app.logs
+      container_name: app
+      image: app-spring:${VERSION}
+      build:
+        context: ./../
+        dockerfile: ./deploy/dockers/app.Dockerfile
+      environment:
+        - DB_URL=${DB_URL}
+        - DB_USER=${DB_USER}
+        - DB_PASS=${DB_PASS}
+      depends_on:
+        - fluent-bit
+        - envoy
+        - minio
+        - liquibase
+      logging:
+        # используемый драйвер логгирования
+        driver: "fluentd"
+        options:
+          # куда посылать лог-сообщения, необходимо чтобы адрес
+          # совпадал с настройками плагина forward
+          fluentd-address: localhost:24224
+          # теги используются для маршрутизации лог-сообщений, тема
+          # маршрутизации будет рассмотрена ниже
+          tag: app.logs
 
   fluent-bit:
 #    Logstash: 2GB RAM 400MB Docker
@@ -176,5 +180,66 @@ services:
       timeout: 20s
       retries: 3
 
-volumes:
-  opensearch-data:
+  psql:
+    image: postgres:15.4
+    container_name: postgresql
+# Какждый раз создаем volume заново и проводим миграцияю.
+# Версия для демонстрации
+#    volumes:
+#      - ./volumes/postgress/data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: postgres
+    logging:
+      # используемый драйвер логгирования
+      driver: "fluentd"
+      options:
+        # куда посылать лог-сообщения, необходимо чтобы адрес
+        # совпадал с настройками плагина forward
+        fluentd-address: localhost:24225
+        # теги используются для маршрутизации лог-сообщений, тема
+        # маршрутизации будет рассмотрена ниже
+        tag: postgress.logs
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  liquibase:
+    image: "migration:${VERSION}"
+    container_name: liquibase
+    build:
+      context: ./../
+      dockerfile: ./deploy/dockers/liqbase.Dockerfile
+    environment:
+      LIQUIBASE_COMMAND_URL: ${DB_URL}
+      LIQUIBASE_COMMAND_USERNAME: ${DB_USER}
+      LIQUIBASE_COMMAND_PASSWORD: ${DB_PASS}
+      LIQUIBASE_LIQUIBASE_SCHEMA_NAME: public
+    logging:
+      # используемый драйвер логгирования
+      driver: "fluentd"
+      options:
+        # куда посылать лог-сообщения, необходимо чтобы адрес
+        # совпадал с настройками плагина forward
+        fluentd-address: localhost:24225
+        # теги используются для маршрутизации лог-сообщений, тема
+        # маршрутизации будет рассмотрена ниже
+        tag: liquibase.logs
+    depends_on:
+      psql:
+        condition: service_healthy
+      opensearch:
+        condition: service_healthy
+
+
+#volumes:
+#  opensearch-data:
+#  postgres_data:
+

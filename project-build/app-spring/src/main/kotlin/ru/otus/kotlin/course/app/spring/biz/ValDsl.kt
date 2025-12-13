@@ -12,7 +12,7 @@ import ru.otus.kotlin.course.cor.worker
 fun ICorChainDsl<PsBeContext>.validateId (title: String = "") = worker {
     this.title = title
     this.description = "Prepare PsBeContext"
-    on { response.id == PsImageId.NONE && this.state == PsState.RUNNING  }
+    on { request.id == PsImageId.NONE && this.state == PsState.RUNNING  }
     handle {
         this.fail(
             validationErr(
@@ -26,7 +26,7 @@ fun ICorChainDsl<PsBeContext>.validateId (title: String = "") = worker {
 
 fun ICorChainDsl<PsBeContext>.validateTitleNotEmpty(title: String) = worker {
     this.title = title
-    on { response.title.isEmpty() && this.state == PsState.RUNNING}
+    on { request.title.isEmpty() && this.state == PsState.RUNNING}
     handle {
         this.fail(
             validationErr(

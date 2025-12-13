@@ -87,3 +87,33 @@ fun  stubCreate(flag: Boolean = true) = Pair<ImageCreateRequest, ImageCreateResp
         imageId = IMAGE_ID
     )
 )
+
+fun stubReadErrors(stubError: DebugItem.Stub, error: ResponseErrorValue, flag: Boolean = true) = Pair<ImageReadRequest, ImageReadResponse> (
+    ImageReadRequest(
+        requestType = "read",
+        debug =  DebugItem (
+            mode = DebugItem.Mode.STUB,
+            stub = stubError
+        ),
+        imageId = IMAGE_ID
+    ), ImageReadResponse (
+        responseType = if (flag) "read" else null,
+        result = ResponseResult.ERROR,
+        errors = listOf(error)
+    )
+)
+
+fun stubCreateErrors(stubError: DebugItem.Stub, error: ResponseErrorValue, flag: Boolean = true) = Pair<ImageCreateRequest, ImageCreateResponse> (
+    ImageCreateRequest(
+        debug =  DebugItem (
+            mode = DebugItem.Mode.STUB,
+            stub = stubError
+        ),
+    ), ImageCreateResponse (
+        responseType = if (flag) "create" else null,
+        result = ResponseResult.ERROR,
+        errors = listOf(error)
+    )
+)
+
+
