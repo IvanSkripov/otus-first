@@ -62,12 +62,15 @@ export JAVA_HOME=~/jdk-21.0.9/
 - просмотр логов nginx
     docker logs `docker ps | grep nginx | awk '{ print $1}'`
 
-- миграция
+- миграция (Запускать из папки deploy
     export VERSION=0.0.1
-    docker build -t migration:$VERSION --build-arg VERSION=$VERSION -f liqbase.Dockerfile ../../
+    docker network create -d bridge migration_network
+    docker build -t migration:$VERSION -f ./dockers/liqbase.Dockerfile ./../
     set -a; source .env; set +a
-    docker run -e LIQUIBASE_COMMAND_URL=$DB_URL -e LIQUIBASE_COMMAND_USERNAME=$DB_USER -e LIQUIBASE_COMMAND_PASSWORD=$DB_PASS migration:$VERSION
+    docker run --name some-postgres --network=migration_network -e POSTGRES_USER=$DB_USER -e POSTGRES_PASSWORD=$DB_PASS -d -p 5432:5432 postgres:15.4
+    docker run --network=migration_network -e LIQUIBASE_COMMAND_URL=MIGRATION_URL -e LIQUIBASE_COMMAND_USERNAME=$DB_USER -e LIQUIBASE_COMMAND_PASSWORD=$DB_PASS migration:$VERSION
 
+    docker run -it migration:0.0.1  bash
 
 
 
