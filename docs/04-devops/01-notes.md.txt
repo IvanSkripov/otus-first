@@ -15,9 +15,11 @@
 ### Проверка приложения
 
 - http://localhost:8080/actuator
+- http://84.201.169.219:8080/actuator
 - {"requestType":"read","debug":{"mode":"stub","stub":"wrongLink"},"imageId":"123","requestType":null}
 - {"requestType":"read","debug":{"mode":"test"},"imageId":"123","requestType":null}
-- {"requestType":"read","debug":{"mode":"stub"},"imageId":"123","requestType":null}
+- {"requestType":"read","debug":{"mode":"prod"},"imageId":"Migration-00000","requestType":null}
+
 
 
 ### Запуск Gradle
