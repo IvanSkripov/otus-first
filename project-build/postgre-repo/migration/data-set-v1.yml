@@ -9,7 +9,7 @@ databaseChangeLog:
               tableName: images
               columns:
                 - column:
-                    name: key
+                    name: id
                     value: 00000
                 - column:
                     name: title
@@ -39,7 +39,7 @@ databaseChangeLog:
               tableName: label_values
               columns:
                 - column:
-                    name: id
+                    name: label_key
                     value: author
                 - column:
                     name: value
@@ -52,7 +52,7 @@ databaseChangeLog:
               columns:
                 - column:
                     name: data
-                    value: "E'\\xDEADBEEF'"
+                    value: E'\\xDEADBEEF'
                 - column:
                     name: image_id
                     value: 00000
