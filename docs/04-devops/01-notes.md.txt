@@ -17,6 +17,7 @@
 - http://localhost:8080/actuator
 - {"requestType":"read","debug":{"mode":"stub","stub":"wrongLink"},"imageId":"123","requestType":null}
 - {"requestType":"read","debug":{"mode":"test"},"imageId":"123","requestType":null}
+- {"requestType":"read","debug":{"mode":"stub"},"imageId":"123","requestType":null}
 
 
 ### Запуск Gradle
@@ -50,14 +51,20 @@ export JAVA_HOME=~/jdk-21.0.9/
 - сборка контейнера приложения
     export VERSION=0.0.1
     docker build -t app-spring:$VERSION --build-arg VERSION=$VERSION -f app.Dockerfile ../../
-    docker run  -p 8080:8080 app-sprint:0.0.1
+    docker run  -p 8080:8080 app-sprint:$VERSION
 
 - сборка через docker compose
     docker compose -f docker-compose-minio.yml up -d
     docker rm `docker ps -a | grep -v CONTAINER | awk ' { a = a " "  $1 } END { print a }' `
+    docker stop `docker ps -a | grep -v CONTAINER | awk ' { a = a " "  $1 } END { print a }' `
 
 - просмотр логов nginx
     docker logs `docker ps | grep nginx | awk '{ print $1}'`
+
+- миграция
+    export VERSION=0.0.1
+    docker build -t migration:$VERSION --build-arg VERSION=$VERSION -f liqbase.Dockerfile ../../
+    docker run migration:$VERSION
 
 ### Клиент для Postgre
 

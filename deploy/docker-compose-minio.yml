@@ -11,28 +11,8 @@
 # Управление пользователями http://localhost:8080/admin (keycloak)
 
 services:
-
   app:
-#    image: nginx:latest
-#    depends_on:
-#      - fluent-bit
-#      - envoy
-# #     - minio
-#    volumes:
-#      - ./volumes/nginx/default.conf:/etc/nginx/conf.d/default.conf
-#      - ./volumes/nginx/nginx.conf:/etc/nginx/nginx.conf
-#      - ./volumes/nginx/html:/usr/share/nginx/html
-#    logging:
-#      # используемый драйвер логгирования
-#      driver: "fluentd"
-#      options:
-#        # куда посылать лог-сообщения, необходимо чтобы адрес
-#        # совпадал с настройками плагина forward
-#        fluentd-address: localhost:24224
-#        # теги используются для маршрутизации лог-сообщений, тема
-#        # маршрутизации будет рассмотрена ниже
-#        tag: app.logs
-
+      container_name: app
       image: app-spring:${VERSION}
       build:
         context: ./../
@@ -44,7 +24,7 @@ services:
       depends_on:
         - fluent-bit
         - envoy
-   #     - minio
+        - minio
       logging:
         # используемый драйвер логгирования
         driver: "fluentd"
@@ -202,8 +182,10 @@ services:
   psql:
     image: postgres:15.4
     container_name: postgresql
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+# Какждый раз создаем volume заново и проводим миграцияю.
+# Версия для демонстрации
+#    volumes:
+#      - ./volumes/postgress/data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     expose:
@@ -218,20 +200,24 @@ services:
       timeout: 5s
       retries: 5
 
-#  liquibase:
-#    image: "migration:${VERSION}"
-#    environment:
-#      LIQUIBASE_URL:
-#      LIQUIBASE_COMMAND_URL: ${DB_URL}
-#      LIQUIBASE_COMMAND_USERNAME: ${DB_USER}
-#      LIQUIBASE_COMMAND_PASSWORD: ${DB_PASS}
-#      LIQUIBASE_LIQUIBASE_SCHEMA_NAME: public
-#    depends_on:
-#      psql:
-#        condition: service_healthy
+  liquibase:
+    image: "migration:${VERSION}"
+    container_name: liquibase
+    build:
+      context: ./../
+      dockerfile: ./dockers/liqbase.Dockerfile
+    environment:
+      LIQUIBASE_URL:
+      LIQUIBASE_COMMAND_URL: ${DB_URL}
+      LIQUIBASE_COMMAND_USERNAME: ${DB_USER}
+      LIQUIBASE_COMMAND_PASSWORD: ${DB_PASS}
+      LIQUIBASE_LIQUIBASE_SCHEMA_NAME: public
+    depends_on:
+      psql:
+        condition: service_healthy
 
 
-volumes:
-  opensearch-data:
-  postgres_data:
+#volumes:
+#  opensearch-data:
+#  postgres_data:
 

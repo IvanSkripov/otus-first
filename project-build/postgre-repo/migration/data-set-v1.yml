@@ -1,0 +1,25 @@
+databaseChangeLog:
+
+- changeSet:
+      id: 3
+      author: iskripov
+      changes:
+        changes:
+          - insert:
+              tableName: labels
+              columns:
+                - column:
+                    name: key
+                    value: author
+                - column:
+                    name: description
+                    value: Автор
+          - insert:
+              tableName: labels
+              columns:
+                - column:
+                    name: key
+                    value: format
+                - column:
+                    name: description
+                    value: Формат изображения
