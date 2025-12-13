@@ -25,6 +25,7 @@ services:
         - fluent-bit
         - envoy
         - minio
+        - liquibase
       logging:
         # используемый драйвер логгирования
         driver: "fluentd"
@@ -194,6 +195,16 @@ services:
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_DB: postgres
+    logging:
+      # используемый драйвер логгирования
+      driver: "fluentd"
+      options:
+        # куда посылать лог-сообщения, необходимо чтобы адрес
+        # совпадал с настройками плагина forward
+        fluentd-address: localhost:24225
+        # теги используются для маршрутизации лог-сообщений, тема
+        # маршрутизации будет рассмотрена ниже
+        tag: postgress.logs
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready" ]
       interval: 30s
@@ -211,8 +222,20 @@ services:
       LIQUIBASE_COMMAND_USERNAME: ${DB_USER}
       LIQUIBASE_COMMAND_PASSWORD: ${DB_PASS}
       LIQUIBASE_LIQUIBASE_SCHEMA_NAME: public
+    logging:
+      # используемый драйвер логгирования
+      driver: "fluentd"
+      options:
+        # куда посылать лог-сообщения, необходимо чтобы адрес
+        # совпадал с настройками плагина forward
+        fluentd-address: localhost:24225
+        # теги используются для маршрутизации лог-сообщений, тема
+        # маршрутизации будет рассмотрена ниже
+        tag: liquibase.logs
     depends_on:
       psql:
+        condition: service_healthy
+      opensearch:
         condition: service_healthy
 
 
