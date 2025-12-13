@@ -55,6 +55,7 @@ export JAVA_HOME=~/jdk-21.0.9/
 
 - сборка через docker compose
     docker compose -f docker-compose-minio.yml up -d
+    docker compose -f docker-compose-minio.yml build
     docker rm `docker ps -a | grep -v CONTAINER | awk ' { a = a " "  $1 } END { print a }' `
     docker stop `docker ps -a | grep -v CONTAINER | awk ' { a = a " "  $1 } END { print a }' `
     docker rmi `docker images | grep -v CONTAINER | grep none | awk ' { a = a " "  $3 } END { print a }' `

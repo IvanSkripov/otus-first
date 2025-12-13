@@ -16,7 +16,7 @@ services:
       image: app-spring:${VERSION}
       build:
         context: ./../
-        dockerfile: ./dockers/app.Dockerfile
+        dockerfile: ./deploy/dockers/app.Dockerfile
       environment:
         - DB_URL=${DB_URL}
         - DB_USER=${DB_USER}
@@ -216,7 +216,7 @@ services:
     container_name: liquibase
     build:
       context: ./../
-      dockerfile: ./dockers/liqbase.Dockerfile
+      dockerfile: ./deploy/dockers/liqbase.Dockerfile
     environment:
       LIQUIBASE_COMMAND_URL: ${DB_URL}
       LIQUIBASE_COMMAND_USERNAME: ${DB_USER}
